@@ -1,0 +1,73 @@
+/***************************
+* Wrappers
+****************************/
+div[id$="_wrapper"] {
+    display: none;
+}
+
+/***************************
+* LISTADO DE NOTAS
+****************************/
+
+/* elementos del listado de notas */
+li.ddnotes_list_element {
+    font-size: 1rem !important
+}
+
+/* Iconos de los elementos del listado */
+li.ddnotes_list_element i{
+    font-size: 1.25em;
+    font-weight: 900;
+}
+
+/* Fecha de creación de la nota en el listado */
+li.ddnotes_list_element span.ddnotes_list_element_date {
+    font-size: smaller;
+}
+
+/* Peso de la nota en el listado */
+li.ddnotes_list_element span.ddnotes_list_element_size {
+    font-size: smaller;
+}
+
+/***************************
+* CONTENIDO CENTRAL
+****************************/
+
+/* Roundcube Watermark */
+#ddnotes_watermark {
+    width: 100%;
+    height: 100%;
+    background: center/30% url("/skins/elastic/images/logo.svg") no-repeat #fff;
+    background-blend-mode: luminosity;
+}
+
+#ddnotes_watermark::before {
+    content: ""; 
+    position: absolute; 
+    top: 0; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    background: rgba(255, 255, 255, .85);
+}
+
+/* Default img max-height for xs portraits less than 576px*/
+#ddnotes_note_content img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* div de previsualización del contenido */
+#ddnotes_note_content {
+    white-space: pre-wrap;
+}
+
+#ddnotes_show_note_wrapper {
+    width: 99%;
+}
+
+div.ddnotes_sticky_title {
+    top: -1px;
+    background-color: #fff;
+}

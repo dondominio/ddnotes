@@ -1,0 +1,47 @@
+<?php
+
+$config["ddnotes_config"] = [
+
+    /**
+     * Max size of the note. Notes content are saved via `longblob` column type.
+     * The size of this column is not the same as the file size at the computer filesystem.
+     * So this value must be always greatter than the upload_max_filesize.
+     * This value is represented as bytes.
+     */
+    "note_max_filesize"        => 15728640,
+
+    /**
+     * Max size of the files/images uploads.
+     * This value must be always smaller than the note_max_filesize.
+     * This value is represented as bytes.
+     */
+    "upload_max_filesize"      => 1048576,
+
+    /**
+     * Extensions that plugin supports
+     * @see: https://www.freeformatter.com/mime-types-list.html#mime-types-list
+     * "type" => [..."subtypes"]
+     */
+    "extensions" => [
+        /** 
+         * Image extensions for upload
+         * Check "editor-image-accept" if you modify this option
+         */ 
+        "image" => ["jpg", "jpeg", "png"],
+
+        /**
+         * File extensions for upload
+         */
+        "application" => ["pdf"],
+
+        /**
+         * Text file extensions for upload
+         * They must be plain text based because they will be used with the editor
+         * Tested with "markdown", "plain" and "html"
+         */
+        "text" => ["markdown", "plain", "html"],
+    ]
+
+];
+
+?>

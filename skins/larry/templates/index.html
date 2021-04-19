@@ -1,0 +1,78 @@
+<roundcube:object name="doctype" value="html5" />
+<html>
+<head>
+<roundcube:include file="/includes/links.html" />
+</head>
+<body class="noscroll">
+
+    <roundcube:include file="/includes/header.html" />
+
+    <div id="mainscreen">
+
+        <!-- toolbar -->
+        <div id="ddnotes_toolbar" class="toolbar" role="toolbar" aria-labelledby="aria-label-toolbar">
+
+            <roundcube:button type="link" command="new_note" prop="text/markdown" 
+            title="ddnotes.new_note" label="ddnotes.new_note" class="button insertsig active" innerClass="inner"
+            onclick="return UI.toggle_popup('ddnotes_creation_submenu', event)" />
+            
+            <roundcube:button type="link" command="new_note" prop="file" 
+            title="ddnotes.upload" label="ddnotes.upload" class="button attach active" innerClass="inner" />
+
+        </div>
+        
+        <div id="ddnotes_searchbox" class="searchbox">
+            <a class="iconbutton searchicon" href="#" onclick="$('#ddnotes_search_form').trigger('submit')"></a>
+
+            <form id="ddnotes_search_form" method="POST">
+                <input id="ddnotes_search_input" type="text" placeholder="<roundcube:label name='ddnotes.search' />">
+            </form>
+            
+            <a class="iconbutton reset" href="#" onclick="$('#ddnotes_search_form').trigger('reset').trigger('submit')"></a>
+        </div>
+
+        <div id="mainscreencontent">
+            
+            <div id="ddnotes_sidebar">
+                <div id="ddnotes_notes_wrapper" class="uibox listbox">
+                    
+                    <div class="boxtitle"><roundcube:label name="ddnotes.notes_list" /></div>
+                    
+                    <div class="scroller withfooter">
+                        <ul id="ddnotes_list" class="listing"></ul>
+                    </div>
+                    
+                    <div class="boxfooter">
+                        <roundcube:button type="link" command="delete_note" class="listbutton delete disabled" id="ddnotes_delete_note" innerClass="inner" label="ddnotes.delete_note" label="ddnotes.delete_note" />
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="ddnotes_content" class="uibox">
+                <div id="ddnotes_content_wrapper" class="contentbox"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="ddnotes_form_upload_wrapper" style="display: none;">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="ddnotes_file_upload" id="ddnotes_file_upload">
+        </form>
+    </div>
+
+    <div id="ddnotes_form_editor_wrapper" style="display: none;">
+        <form method="POST" enctype="multipart/form-data">
+            <input type="file" name="ddnotes_editor_upload" id="ddnotes_editor_upload">
+        </form>
+    </div>
+
+    <!-- Popup menu created from backend -->
+    <roundcube:object name="ddnotes_creation_submenu" />
+
+    <roundcube:include file="/includes/footer.html" />
+
+</body>
+</html>

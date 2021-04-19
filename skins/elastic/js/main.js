@@ -217,6 +217,7 @@ $( function() {
          * Registro de callbacks del backend
          *****************/
         rcmail.addEventListener("plugin.new", function ( response ) {
+            console.log(response);
             if (response.result === true) {
                 $(form_id).val(response.id);
                 $(input_note_title).val(response.data.title);
@@ -224,6 +225,33 @@ $( function() {
                 refresh_list( function() {
                     list.children().first().addClass("selected");
                 });
+
+                hide_all();
+                reset_form();
+                reset_editor();
+
+                $(form_type).val(response.data.mimetype.full);
+                $(input_note_title).val( rcmail.gettext("new_note", "ddnotes") );
+                $(input_note_content).val("");
+                $(form_content).val("");
+
+                if (response.data.mimetype.full === "text/plain") {
+                    input_note_content.show();
+                    mde.toTextArea();
+                    mde = null;
+                }
+
+                note_title_wrapper.show();
+                editor_wrapper.show();
+                buttons_wrapper.show();
+                save_button.show();
+                watermark.hide();
+
+                if (is_mobile()) {
+                    $("#layout-sidebar").removeClass("selected").addClass("hidden");
+                    $("#layout-content").removeClass("hidden").addClass("selected");
+                    $(toolbar_menu).addClass("hidden");
+                }
 
             }
         });
@@ -347,33 +375,6 @@ $( function() {
             rcmail.http_post("new", {
                 type: type
             });
-
-            hide_all();
-            reset_form();
-            reset_editor();
-
-            $(form_type).val(type);
-            $(input_note_title).val("");
-            $(input_note_content).val("");
-            $(form_content).val("");
-
-            if (type === "text/plain") {
-                input_note_content.show();
-                mde.toTextArea();
-                mde = null;
-            }
-
-            note_title_wrapper.show();
-            editor_wrapper.show();
-            buttons_wrapper.show();
-            save_button.show();
-            watermark.hide();
-
-            if (is_mobile()) {
-                $("#layout-sidebar").removeClass("selected").addClass("hidden");
-                $("#layout-content").removeClass("hidden").addClass("selected");
-                $(toolbar_menu).addClass("hidden");
-            }
         }
 
         function update_note()

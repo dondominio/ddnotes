@@ -503,14 +503,8 @@ $(function () {
         function create_headers(element) {
             note = element;
             let header = $("<div>", { class: "ddnotes_note_headers" }).append(
-                // $("<div>", { class: "ddnotes_note_headers_icon" }).append(
-                //     $("<span>", { class: element.icon + " fa-2x" })
-                // )
-            ).append(
                 $("<div>", { class: "ddnotes_note_headers_info" }).append(
                     $("<h3>", { title: element.title, text: element.title })
-                ).append(
-                    // $("<span>", { text: element.ts_created })
                 )
             ).append(
                 $("<div>", { class: "ddnotes_note_headers_actions" }).append(

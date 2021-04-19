@@ -121,7 +121,7 @@ The allowed formats are the followings
 - .md
 - .html
 
-This is the default configuraction at `config.inc.php.dist`
+This is the extensions default configuration at `config.inc.php.dist`
 ```php
     "extensions" => [
             /** 
@@ -145,13 +145,13 @@ This is the default configuraction at `config.inc.php.dist`
 
 ### Editing `config.inc.php`
 
-If you want to change the notes formats allowed, for example do not allow .html files, just delete `"html"` from the `"text"` list.
+If you want to change the notes formats allowed, for example do not allow .html files, just delete `"html"` from the `"text"` array.
 
 The indexes `"image"`, `"application"` and `"text"` must always exist even if they are empty.
 
 ### MySQL tables
 
-This plugin saves the information in the database, so it is necessary to create a table where to save this information. To do this, we will use the creation files from the `SQL` folder, depending on the database we use. You can open them and run their content directly. In the case of MySQL you could do it from PHPMyAdmin or through terminal:
+This plugin saves the information in a database, so it is necessary to create a table where to save this information. To do this, we will use the creation files from the `SQL` folder, depending on the database we use. You can open them and run their content directly. In the case of MySQL you could do it from PHPMyAdmin or through terminal:
 
 ```bash
 mysql -u USER -p PASS < /folder/to/roundcube/plugins/ddnotes/SQL/mysql.initial.sql

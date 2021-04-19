@@ -1,10 +1,14 @@
 <?php declare(strict_types=1);
-error_reporting(E_ALL & ~E_NOTICE);
 
 /**
  * DonDominio Notes
  * This is a wrapper class for all AJAX responses
  * generated at the backend, to the frontend
+ * 
+ * @version 1.0
+ * @author Soluciones Corporativas IP S.L.
+ * @copyright Copyright (c) 2021, SCIP
+ * @license Apache-2
  */
 class ddnotes_response implements JsonSerializable
 {

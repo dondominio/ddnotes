@@ -1,5 +1,4 @@
 <?php declare(strict_types = 1);
-error_reporting(E_ALL & ~E_NOTICE);
 
 /**
  * DonDominio Notes
@@ -7,7 +6,7 @@ error_reporting(E_ALL & ~E_NOTICE);
  * @version 1.0
  * @author Soluciones Corporativas IP S.L.
  * @copyright Copyright (c) 2021, SCIP
- * @license GNU General Public License, version 3
+ * @license Apache-2
  */
 class ddnotes extends rcube_plugin 
 {

@@ -1,9 +1,13 @@
 <?php declare(strict_types=1);
-error_reporting(E_ALL & ~E_NOTICE);
 
 /**
  * DonDominio Notes
- * A Note Model
+ * Note Model
+ * 
+ * @version 1.0
+ * @author Soluciones Corporativas IP S.L.
+ * @copyright Copyright (c) 2021, SCIP
+ * @license Apache-2
  * 
  * Mime Types list
  * @see: http://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types

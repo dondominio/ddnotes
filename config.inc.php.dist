@@ -7,15 +7,17 @@ $config["ddnotes_config"] = [
      * The size of this column is not the same as the file size at the computer filesystem.
      * So this value must be always greatter than the upload_max_filesize.
      * This value is represented as bytes.
+     * Default 26214400 (25MB)
      */
-    "note_max_filesize"        => 15728640,
+    "note_max_filesize"        => 26214400,
 
     /**
      * Max size of the files/images uploads.
      * This value must be always smaller than the note_max_filesize.
      * This value is represented as bytes.
+     * Default 8388608 (8MB)
      */
-    "upload_max_filesize"      => 1048576,
+    "upload_max_filesize"      => 8388608,
 
     /**
      * Extensions that plugin supports
@@ -25,7 +27,6 @@ $config["ddnotes_config"] = [
     "extensions" => [
         /** 
          * Image extensions for upload
-         * Check "editor-image-accept" if you modify this option
          */ 
         "image" => ["jpg", "jpeg", "png"],
 
@@ -36,7 +37,7 @@ $config["ddnotes_config"] = [
 
         /**
          * Text file extensions for upload
-         * They must be plain text based because they will be used with the editor
+         * They must be plain text based because they will be used with the EasyMDE
          * Tested with "markdown", "plain" and "html"
          */
         "text" => ["markdown", "plain", "html"],
@@ -44,4 +45,4 @@ $config["ddnotes_config"] = [
 
 ];
 
-?>
+?> 

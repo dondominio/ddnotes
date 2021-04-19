@@ -12,11 +12,11 @@
  */
 class ddnotes_response implements JsonSerializable
 {
-    private bool $result = true;
-    private array $data = [];
-    private string $error = "";
-    private int $id = 0;
-    private string $date_format;
+    private $result = true;
+    private $data = [];
+    private $error = "";
+    private $id = 0;
+    private $date_format;
 
     public function __construct()
     {

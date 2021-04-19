@@ -14,17 +14,16 @@
  */
 class ddnotes_model
 {
-    public static string $tablename = "ddnotes";
-
-    private int $id;
-    private int $parent_id;
-    private int $user_id;
-    private string $mimetype;
-    private string $title;
-    private string $content;
-    private int $file_size;
-    private DateTime $created;
-    private DateTime $updated;
+    public static $tablename = "ddnotes";
+    private $id;
+    private $parent_id;
+    private $user_id;
+    private $mimetype;
+    private $title;
+    private $content;
+    private $file_size;
+    private $created;
+    private $updated;
     
     public function __construct()
     {

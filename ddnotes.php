@@ -10,27 +10,47 @@
  */
 class ddnotes extends rcube_plugin 
 {
+    /**
+     * Roundcube task where this plugin is executed
+     *
+     * @var string
+     */
     public $task = ".*";
 
-    private array $config = [];
+    /**
+     * Plugin configuration
+     *
+     * @var array
+     */
+    private $config = [];
     
-    private int $user_id;
+    /**
+     * Session User ID
+     *
+     * @var [type]
+     */
+    private $user_id;
 
-    public static string $default_date_format = "d/m/Y H:i";
+    /**
+     * Default date format
+     *
+     * @var string
+     */
+    public static $default_date_format = "d/m/Y H:i";
 
     /**
      * The corresponding usable skin path for this plugin.
      *
      * @var string like "skins/larry"
      */
-    private string $skinPath = '';
+    private $skinPath = '';
 
     /**
      * The corresponding usable skin name for this plugin.
      *
      * @var string like "larry"
      */
-    private string $skinName = '';
+    private $skinName = '';
     
     /**
      * Plugin initialization

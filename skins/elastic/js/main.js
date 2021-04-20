@@ -147,7 +147,7 @@ $( function() {
                 className: "fa fa-image",
             }, {
                 name: "upload-image",
-                action: () => { $(editor_upload).click() },
+                action: () => { $(input_image_upload).click() },
                 title: rcmail.gettext("upload_image", "ddnotes"),
                 className: "far fa-file-image",
             }, "|", {
@@ -217,7 +217,6 @@ $( function() {
          * Registro de callbacks del backend
          *****************/
         rcmail.addEventListener("plugin.new", function ( response ) {
-            console.log(response);
             if (response.result === true) {
                 $(form_id).val(response.id);
                 $(input_note_title).val(response.data.title);
@@ -305,12 +304,6 @@ $( function() {
                 // Save note object to the edit button at toolbar
                 $("a#ddnotes_edit_note").attr("data-note", JSON.stringify(response.data));
 
-                // $(note_icon).removeClass().addClass(response.data.icon + " fa-3x");
-                // $(note_created).text(response.data.ts_created);
-                // $(note_updated).text(response.data.ts_updated);
-                // $(note_type).text(response.data.mimetype.type);
-                // $(note_format).text(response.data.mimetype.subtype);
-                // $(note_size).text(response.data.file_size.readable);
                 $(download_button).attr({
                     href:       response.data.content.encoded,
                     download:   response.data.title + "." + response.data.extension,
@@ -456,12 +449,24 @@ $( function() {
 
         function upload_file()
         {
-            var title       = $(input_note_title).val();    // Note title
-            var file        = $(form_upload)[0].files[0];   // EasyMDE editor content
+            var title           = $(input_note_title).val();    // Note title
+            var file            = $(form_upload)[0].files[0];   // EasyMDE editor content
+            var mime_type       = file.type.split( "/" ).shift();
+            var mime_subtype    = file.type.split( "/" ).pop();
 
             if ( $(input_note_title).val().trim().length === 0 ) {
                 rcmail.display_message( rcmail.gettext("empty_title", "ddnotes"), "error" );
                 $(input_note_title).focus();
+                return;
+            }
+
+            // Check for formats
+            if (
+                (mime_type === "image" && !(rcmail.env.ddnotes_config.extensions.image.includes(mime_subtype))) ||
+                (mime_type === "application" && !(rcmail.env.ddnotes_config.extensions.application.includes(mime_subtype))) ||
+                (mime_type === "text" && !(rcmail.env.ddnotes_config.extensions.text.includes(mime_subtype)))
+            ) {
+                rcmail.display_message( rcmail.gettext("invalid_format", "ddnotes"), "error" );
                 return;
             }
 
@@ -666,17 +671,21 @@ $( function() {
                 var mime_subtype    = mime.split( "/" ).pop();
                 var name            = file.name.split(".").shift();
 
-                $(input_note_title).val(name);
-                $(form_type).val(mime);
-                
-                if (mimetype == "application" && mime_subtype !== "pdf") {
+                if (
+                    (mimetype === "image" && !(rcmail.env.ddnotes_config.extensions.image.includes(mime_subtype))) ||
+                    (mimetype === "application" && !(rcmail.env.ddnotes_config.extensions.application.includes(mime_subtype))) ||
+                    (mimetype === "text" && !(rcmail.env.ddnotes_config.extensions.text.includes(mime_subtype)))                    
+                ) {
                     hide_all();
                     $(input_note_title).val("");
                     $(form_type).val("");
                     $(input_note_content).val("");
-                    rcmail.display_message( rcmail.gettext("invalid_type", "ddnotes"), "error");
+                    rcmail.display_message( rcmail.gettext("invalid_format", "ddnotes"), "error" );
                     return;
                 }
+
+                $(input_note_title).val(name);
+                $(form_type).val(mime);
 
                 if (mimetype == "image") {
                     let target = $( upload_image_wrapper ).find( "img" );
@@ -741,7 +750,13 @@ $( function() {
                             size: file.size,
                         }
                     }).done(function( response ) {
-                        mde.codemirror.replaceSelection("![" + response.data.title + "](" + response.link + ")");
+                        if (response.result === true) {
+                            mde.codemirror.replaceSelection("![" + response.data.title + "](" + response.link + ")");
+                        } 
+
+                        if (response.result === false) {
+                            rcmail.display_message( rcmail.gettext(response.error, "ddnotes"), "error" );
+                        }
                     });
                 }
             }

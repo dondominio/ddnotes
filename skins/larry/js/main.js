@@ -860,7 +860,13 @@ $(function () {
                             size: file.size,
                         }
                     }).done(( response ) => {
-                        mde.codemirror.replaceSelection("![" + response.data.title + "](" + response.link + ")");
+                        if (response.result === true) {
+                            mde.codemirror.replaceSelection("![" + response.data.title + "](" + response.link + ")");
+                        } 
+
+                        if (response.result === false) {
+                            rcmail.display_message( rcmail.gettext(response.error, "ddnotes"), "error" );
+                        }
                     });
                 }
             }

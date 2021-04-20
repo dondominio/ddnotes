@@ -1,3 +1,12 @@
+#taskbar a.button-notes span.button-inner {
+    background: url(../images/note_both.png) no-repeat;
+    background-position: 0 0;
+    display: inline-block;
+}
+#taskbar a.button-notes:hover span.button-inner, #taskbar a.button-notes.button-selected span.button-inner {
+    background-position: 0 -24px;
+}
+
 #ddnotes_toolbar {
     position: absolute;
     top: -6px;

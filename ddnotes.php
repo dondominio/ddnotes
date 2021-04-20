@@ -10,32 +10,9 @@
  */
 class ddnotes extends rcube_plugin 
 {
-    /**
-     * Roundcube task where this plugin is executed
-     *
-     * @var string
-     */
     public $task = ".*";
-
-    /**
-     * Plugin configuration
-     *
-     * @var array
-     */
-    private $config = [];
-    
-    /**
-     * Session User ID
-     *
-     * @var [type]
-     */
+    private $config = [];    
     private $user_id;
-
-    /**
-     * Default date format
-     *
-     * @var string
-     */
     public static $default_date_format = "d/m/Y H:i";
 
     /**
@@ -61,6 +38,8 @@ class ddnotes extends rcube_plugin
         $this->user_id  = (int) $rcmail->user->ID;
 
         $this->skinPath = $this->local_skin_path();
+        // Include CSS for taskbar icon
+        $this->include_stylesheet($this->local_skin_path() . "/css/main.css");
         // remove prefixed "skins/"
         $this->skinName = substr($this->skinPath, 6);
         
@@ -74,7 +53,7 @@ class ddnotes extends rcube_plugin
             "command"       => "ddnotes",
             "type"          => "link",
             "id"            => "ddnotes",
-            "label"         => "ddnotes" . ".taskbar_button",
+            "label"         => "ddnotes.taskbar_button",
             "class"		    => "button-notes",
 			"classsel"	    => "button-notes button-selected",
             "innerclass"    => "button-inner",
@@ -124,7 +103,6 @@ class ddnotes extends rcube_plugin
             $this->include_stylesheet("includes/fontawesome/css/all.min.css");
             $this->include_stylesheet("includes/easymde/css/easymde.css");
             $this->include_stylesheet("includes/easymde/css/highlight/github-gist.css");
-            $this->include_stylesheet($this->local_skin_path() . "/css/main.css");
 
             /**
              * JS includes
@@ -432,6 +410,8 @@ class ddnotes extends rcube_plugin
     public function embed() : void
     {
         $rcmail     = rcmail::get_instance();
+        header("Content-Type: application/json; charset=" . $rcmail->output->get_charset());
+        
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
         $title      = rcube_utils::get_input_value("title", rcube_utils::INPUT_POST);
         $mimetype   = rcube_utils::get_input_value("mime", rcube_utils::INPUT_POST);
@@ -443,20 +423,25 @@ class ddnotes extends rcube_plugin
         
         // Check mimetype
         if ( !ddnotes_model::isValidMime($mimetype) ) {
-            $rcmail->output->show_message("ddnotes.invalid_type", "error");
-            return;
+            $response->setResult(false);
+            $response->setError("invalid_type");
+            echo json_encode($response);
+            exit;
         }
         
         // Check for file size
         if ($size >= $this->config["upload_max_filesize"]) {
-            $rcmail->output->show_message("ddnotes.file_size_error", "error");
-            return;
+            $response->setResult(false);
+            $response->setError("file_size_error");
+            echo json_encode($response);
+            exit;
         }
 
         // Check for record size
         if ( $size >= $this->config["note_max_filesize"]) {
-            $rcmail->output->show_message("ddnotes.note_size_error", "error");
-            return;
+            $response->setResult(false);
+            $response->setError("ddnotes.note_size_error");
+            exit;
         }
 
         $embed = new ddnotes_model();
@@ -470,7 +455,6 @@ class ddnotes extends rcube_plugin
 
         $response->setFromNote($embed);
 
-        header("Content-Type: application/json; charset=" . $rcmail->output->get_charset());
         echo json_encode( array_merge( $response->toArray(), ["link" => $rcmail->url(["_action" => "view", "_uid" => $embed->getId()], true, true)] ) );
         exit;
     }

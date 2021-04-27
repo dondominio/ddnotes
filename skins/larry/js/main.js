@@ -28,126 +28,11 @@ $(function () {
     const content = $("#ddnotes_content_wrapper");
 
     /**
-     * EasyMDE editor
+     * Editor elements
      */
-    var mde = null;
-    /**
-     * EasyMDE editor options
-     */
-    const EasyMDEOptions = {
-        autoDownloadFontAwesome: false,
-        forceSync: true,
-        sideBySideFullscreen: false,
-        styleSelectedText: false,
-        previewImagesInEditor: false,
-        uploadImage: false,
-        renderingConfig: {
-            codeSyntaxHighlighting: true,
-            hljs: hljs,
-            markedOptions: {
-                renderer: new marked.Renderer(),
-                highlight: function (code, lang) {
-                    if (hljs.getLanguage(lang)) {
-                        return hljs.highlight(code, {language: lang, ignoreIllegals: true}).value
-                    } else {
-                        return hljs.highlight(code, {language: "plaintext", ignoreIllegals: true}).value
-                    }
-                },
-            },
-            sanitizerFunction: function(html) {
-                return DOMPurify.sanitize(html, {USE_PROFILES: {html: true}});
-            },
-        },
-        toolbar: [
-            {
-                action: EasyMDE.undo,
-                title: rcmail.gettext("undo", "ddnotes"),
-                className: "fa fa-undo",
-            }, {
-                action: EasyMDE.redo,
-                title: rcmail.gettext("redo", "ddnotes"),
-                className: "fa fa-redo",
-            }, "|",
-            {
-                action: EasyMDE.toggleBold,
-                title: rcmail.gettext("bold", "ddnotes"),
-                className: "fa fa-bold",
-            }, {
-                action: EasyMDE.toggleItalic,
-                title: rcmail.gettext("italic", "ddnotes"),
-                className: "fa fa-italic",
-            }, {
-                action: EasyMDE.toggleStrikethrough,
-                title: rcmail.gettext("strikethrough", "ddnotes"),
-                className: "fa fa-strikethrough",
-            }, "|", {
-                action: EasyMDE.toggleHeading1,
-                title: rcmail.gettext("heading", "ddnotes") + " 1",
-                icon: "H1",
-            }, {
-                action: EasyMDE.toggleHeading2,
-                title: rcmail.gettext("heading", "ddnotes") + " 2",
-                icon: "H2",
-            }, {
-                action: EasyMDE.toggleHeading3,
-                title: rcmail.gettext("heading", "ddnotes") + " 3",
-                icon: "H3",
-            }, "|", {
-                action: EasyMDE.toggleCodeBlock,
-                title: rcmail.gettext("code", "ddnotes"),
-                className: "fa fa-code",
-            }, {
-                action: EasyMDE.toggleBlockquote,
-                title: rcmail.gettext("quote", "ddnotes"),
-                className: "fa fa-quote-left",
-            }, {
-                action: EasyMDE.toggleUnorderedList,
-                title: rcmail.gettext("generic_list", "ddnotes"),
-                className: "fa fa-list",
-            }, {
-                action: EasyMDE.toggleOrderedList,
-                title: rcmail.gettext("numbered_list", "ddnotes"),
-                className: "fa fa-list-ol",
-            }, "|", {
-                action: EasyMDE.drawLink,
-                title: rcmail.gettext("link", "ddnotes"),
-                className: "fa fa-link",
-            }, {
-                action: EasyMDE.drawImage,
-                title: rcmail.gettext("image", "ddnotes"),
-                className: "fa fa-image",
-            }, {
-                name: "upload-image",
-                action: () => { $(editor_upload).click() },
-                title: rcmail.gettext("upload_image", "ddnotes"),
-                className: "far fa-file-image",
-            }, "|", {
-                action: EasyMDE.drawTable,
-                title: rcmail.gettext("table", "ddnotes"),
-                className: "fa fa-table",
-            }, {
-                action: EasyMDE.drawHorizontalRule,
-                title: rcmail.gettext("horizontal_rule", "ddnotes"),
-                className: "fa fa-minus"
-            }, "|", {
-                action: EasyMDE.togglePreview,
-                title: rcmail.gettext("preview", "ddnotes"),
-                className: "fa fa-eye",
-            }, {
-                action: EasyMDE.toggleSideBySide,
-                title: rcmail.gettext("sidebyside", "ddnotes"),
-                className: "fa fa-columns"
-            }, {
-                action: EasyMDE.toggleFullScreen,
-                title: rcmail.gettext("fullscreen", "ddnotes"),
-                className: "fa fa-expand",
-            }, "|", {
-                action: 'https://www.markdownguide.org/basic-syntax/',
-                title: rcmail.gettext("markdown_guide", "ddnotes"),
-                className: "fa fa-question-circle",
-            }
-        ],
-    };
+    var tiny_editor = {};
+    var tiny_editor_toolbar = {};
+
     /**
      * DDNotes element
      */
@@ -165,6 +50,7 @@ $(function () {
             rcmail.register_command("update_note", update_note, true);
             rcmail.register_command("edit_note", edit_note, true);
             rcmail.register_command("delete_note", delete_note, false);
+            rcmail.register_command("send_note", send_note, false);
             rcmail.register_command("show_note", show_note, true);
             rcmail.register_command("cancel_upload", cancel_upload, true);
             rcmail.register_command("cancel_edit", cancel_edit, true);
@@ -190,18 +76,7 @@ $(function () {
                 }).init();
             }
 
-            // Markdown/html parser
-            marked.setOptions({
-                highlight: function (code, lang) {
-                    if (hljs.getLanguage(lang)) {
-                        return hljs.highlight(code, {language: lang, ignoreIllegals: true}).value
-                    } else {
-                        return hljs.highlight(code, {language: "plaintext", ignoreIllegals: true}).value
-                    }
-                },
-            });
-
-            DOMPurify.setConfig( { USE_PROFILES: { html:true } } );
+            DOMPurify.setConfig({ USE_PROFILES: { html: true } });
 
             refresh_list(function () {
                 show_blank_page();
@@ -245,6 +120,9 @@ $(function () {
             if (response.data.isText) {
                 draw_note_text(response.data);
             }
+
+            rcmail.enable_command("send_note", send_note, true);
+
         });
 
         rcmail.addEventListener("plugin.update", function (response) {
@@ -252,6 +130,10 @@ $(function () {
                 refresh_list(function () {
                     $(list).find("li[data-id=" + response.id + "]").click();
                 });
+            }
+
+            if (response.result === false) {
+                rcmail.display_message(rcmail.gettext(response.error, "ddnotes"), "error");
             }
         });
 
@@ -261,6 +143,11 @@ $(function () {
                     $(list).find("li:first-child").click();
                 });
             }
+
+            if (response.result === false) {
+                rcmail.display_message(rcmail.gettext(response.error, "ddnotes"), "error");
+            }
+            console.log(response)
         });
 
         rcmail.addEventListener("plugin.delete", function (response) {
@@ -269,6 +156,10 @@ $(function () {
                     show_blank_page();
                 });
             }
+
+            if (response.result === false) {
+                rcmail.display_message(rcmail.gettext(response.error, "ddnotes"), "error");
+            }
         });
         ///////////////////////////////////////////////////
 
@@ -276,6 +167,10 @@ $(function () {
          * Funciones de los comandos JS
          *****************/
         ///////////////////////////////////////////////////
+        function send_note() {
+            rcmail.goto_url("mail/compose", {ddnotes_id: note.id});
+        }
+
         function show_note(element) {
             rcmail.http_post("show", {
                 id: element.id
@@ -294,18 +189,22 @@ $(function () {
         }
 
         function update_note() {
-            let id      = note.id;
-            let title   = $("#ddnotes_note_title");
+            let id = note.id;
+            let title = $("#ddnotes_note_title");
             let content = $("#ddnotes_editor_textarea").val();
 
-            if ( $(title).val().trim().length === 0 ) {
-                rcmail.display_message( rcmail.gettext("empty_title", "ddnotes"), "error" );
+            if ($(title).val().trim().length === 0) {
+                rcmail.display_message(rcmail.gettext("empty_title", "ddnotes"), "error");
                 $(title).focus();
                 return;
             }
 
+            if (note.isText) {
+                content = tiny_editor.getContent();
+            }
+
             // Para archivos o imagenes, el contenido es "undefined"
-            content = content === undefined ? "": content;
+            content = content === undefined ? "" : DOMPurify.sanitize(content);
 
             rcmail.http_post("update", {
                 id: id,
@@ -319,50 +218,52 @@ $(function () {
             create_edit_headers(note);
 
             if (note.isText) {
-                    
+
                 if (note.extension === "txt") {
-                
+
                     $(content).append(
                         $("<div>", {
-                            id      : "ddnotes_editor_textarea_wrapper",
-                            class   : "ddnotes_editor_textarea_wrapper scroller",
-                            style   : "top: " + $("div.ddnotes_note_headers").outerHeight() + "px;"
+                            id: "ddnotes_editor_textarea_wrapper",
+                            class: "ddnotes_editor_textarea_wrapper scroller",
+                            style: "top: " + $("div.ddnotes_note_headers").outerHeight() + "px;"
                         }).append(
                             $("<textarea>", {
-                                id      : "ddnotes_editor_textarea",
-                                class   : "ddnotes_editor_textarea",
-                                text    : note.content.raw
+                                id: "ddnotes_editor_textarea",
+                                class: "ddnotes_editor_textarea",
+                                text: note.content.raw
                             })
                         )
                     );
                 }
 
                 if (note.extension === "md" || note.extension === "html") {
+
                     $(content).append(
-                        $("<div>", { 
-                            id      : "ddnotes_editor_textarea_wrapper",
-                            class   : "ddnotes_editor_textarea_wrapper"
+                        $("<div>", {
+                            id: "ddnotes_editor_textarea_wrapper",
+                            class: "ddnotes_editor_textarea_wrapper scroller"
                         }).append(
                             $("<textarea>", {
-                                id      : "ddnotes_editor_textarea",
-                                class   : "ddnotes_editor_textarea",
-                                text    : DOMPurify.sanitize( note.content.raw )
+                                id: "ddnotes_editor_textarea",
+                                class: "ddnotes_editor_textarea",
+                                text: note.content.raw
                             })
                         )
+                    ).append(
+                        $("<div>", {
+                            id: "tinymde_toolbar",
+                            class: "ddnotes_editor_toolbar"
+                        })
                     );
 
-                    mde = new EasyMDE({
-                        ...{element: $("#ddnotes_editor_textarea")[0]},
-                        ...EasyMDEOptions
+                    $("#ddnotes_editor_textarea_wrapper").css({
+                        "top": "113px"
                     });
-                    
-                    // Aplicamos altura para que ocupe el 100%
-                    $(content).find(".ddnotes_editor_textarea_wrapper").css({
-                        "height": "100%"
-                    });
+
+                    generate_editor(note.content.raw);
                 }
             }
-            
+
             if (note.isImage) {
                 draw_note_image(note);
             }
@@ -445,7 +346,7 @@ $(function () {
         function load_list(response) {
             list.empty();
 
-            response.data.forEach(element => {
+            response.data.forEach(function (element) {
 
                 let attributes = {
                     "data-id": element.id,
@@ -502,12 +403,11 @@ $(function () {
          */
         function create_headers(element) {
             note = element;
-            let header = $("<div>", { class: "ddnotes_note_headers" }).append(
-                $("<div>", { class: "ddnotes_note_headers_info" }).append(
-                    $("<h3>", { title: element.title, text: element.title })
-                )
-            ).append(
-                $("<div>", { class: "ddnotes_note_headers_actions" }).append(
+            let download = "";
+
+            // IE11
+            if (!(window.ActiveXObject) && "ActiveXObject" in window) {
+                download = $("<div>", { class: "ddnotes_note_headers_actions" }).append(
                     $("<a>", {
                         class: "button fa fa-pencil-alt",
                         href: "#",
@@ -518,14 +418,38 @@ $(function () {
                 ).append(
                     $("<a>", {
                         class: "button fas fa-download",
+                        href: "/?_task=ddnotes&_action=view&_uid=" + element.id,
+                        target: "_blank",
+                        title: rcmail.gettext("download", "ddnotes"),
+                        label: rcmail.gettext("download", "ddnotes"),
+                    })
+                )
+            } else {
+                download = $("<div>", { class: "ddnotes_note_headers_actions" }).append(
+                    $("<a>", {
+                        class: "button fa fa-pencil-alt",
                         href: "#",
+                        title: rcmail.gettext("edit_note", "ddnotes"),
+                        label: rcmail.gettext("edit_note", "ddnotes"),
+                        onclick: "return rcmail.command(\"edit_note\", " + element.id + ")",
+                    }).data("note", JSON.stringify(element))
+                ).append(
+                    $("<a>", {
+                        class: "button fas fa-download",
                         title: rcmail.gettext("download", "ddnotes"),
                         label: rcmail.gettext("download", "ddnotes"),
                         href: element.content.encoded,
                         download: element.title + "." + element.extension,
                     })
                 )
-            )
+            }
+
+            let header = $("<div>", { class: "ddnotes_note_headers" }).append(
+                $("<div>", { class: "ddnotes_note_headers_info" }).append(
+                    $("<h3>", { title: element.title, text: element.title })
+                )
+            ).append(download)
+
             $(content).append(header);
         }
 
@@ -651,17 +575,18 @@ $(function () {
             let file = $("<div>", {
                 class: "ddnotes_note_text scroller",
                 style: "top: " + $("div.ddnotes_note_headers").outerHeight() + "px;"
-            })
+            });
 
+            // Plaintext and html need to escape tags
             if (element.extension === "md" || element.extension === "html") {
                 file.append(
-                    $("<div>").html( DOMPurify.sanitize(marked(element.content.raw)) )
+                    $("<pre>", {
+                        class: "ddnotes_note_text_pre"
+                    }).html(DOMPurify.sanitize(marked(element.content.raw)))
                 );
             }
-            
-            // Plaintext and html need to escape tags
-            if (element.extension === "txt") {
 
+            if (element.extension === "txt") {
                 file.append(
                     $("<pre>", {
                         class: "ddnotes_note_text_pre",
@@ -671,7 +596,32 @@ $(function () {
             }
 
             $(content).append(file);
-            hljs.highlightAll();
+        }
+
+        /**
+         * Initialize editor
+         */
+        function generate_editor(editor_content) {
+            tiny_editor = new TinyMDE.Editor({
+                element: $("#ddnotes_editor_textarea")[0],
+            });
+
+            tiny_editor_toolbar = new TinyMDE.CommandBar({
+                element: $("#tinymde_toolbar")[0],
+                editor: tiny_editor,
+                commands: ['bold', 'italic', 'strikethrough', '|', 'code', '|', 'h1', 'h2', '|', 'ul', 'ol', '|', 'blockquote', 'hr', '|', 'insertLink', 'insertImage',
+                    {
+                        name: "upload",
+                        title: rcmail.gettext("upload", "ddnotes"),
+                        innerHTML: "<span class=\"fas fa-file-import\"></span>",
+                        action: function () {
+                            $(editor_upload).click();
+                        }
+                    }
+                ]
+            });
+
+            tiny_editor.setContent(editor_content ? editor_content : "");
         }
 
         /**
@@ -681,15 +631,15 @@ $(function () {
         function show_blank_page() {
             note = {};
             $(content).empty();
-            fetch("skins/larry/images/watermark.jpg").then(image => {
-                $(content).append(
-                    $("<div>", { class: "ddnotes_watermark_wrapper" }).append(
-                        $("<img>", { src: image.url })
-                    )
-                );
-            });
+
+            $(content).append(
+                $("<div>", { class: "ddnotes_watermark_wrapper" }).append(
+                    $("<img>", { src: "/skins/larry/images/watermark.jpg" })
+                )
+            );
+
             $(delete_button).addClass("disabled");
-            rcmail.enable_command("delete_note", delete_note, false)
+            rcmail.enable_command("delete_note", delete_note, false);
         }
 
         /**
@@ -699,11 +649,15 @@ $(function () {
         function check_mime(type, subtype) {
             let extensions = rcmail.env.ddnotes_config.extensions;
 
-            if (type in extensions) {
-                return (extensions[type].includes(subtype))
-            } else {
-                return false;
-            }
+            return (extensions[type] !== undefined) && (extensions[type].indexOf(subtype) >= 0)
+
+            // return extensions[type].indexOf(subtype) > -1
+            // if (type in extensions) {
+            //     return (extensions[type].includes(subtype))
+
+            // } else {
+            //     return false;
+            // }
         } (Boolean)
 
         /**
@@ -729,7 +683,7 @@ $(function () {
         /**
          * Search bar submit with Enter
          */
-        $(search_form).on("submit", (event) => {
+        $(search_form).on("submit", function (event) {
             event.preventDefault();
             $(search_input).trigger("input");
         });
@@ -737,7 +691,7 @@ $(function () {
         /**
          * Search bar change event
          */
-        $(search_input).on("input", (event) => {
+        $(search_input).on("input", function (event) {
             event.preventDefault();
             let search = event.target.value.toLowerCase();
             let elements = $(list).find("li.ddnotes_list_element");
@@ -749,21 +703,21 @@ $(function () {
 
             elements.hide();
 
-            elements.each((index, element) => {
+            elements.each(function (index, element) {
                 let title = $(element).data("title").toLowerCase();
 
                 if (title.search(search) !== -1) {
                     $(element).show();
                 }
-            } );
+            });
         });
 
         /**
          * Add/Remove "selected" class from <li> at note list from sidebar
          * and activate delete button
          */
-        $(list).delegate("a", "click", (event) => { event.preventDefault(); return; });
-        $(list).delegate("li", "click", (event) => {
+        $(list).delegate("a", "click", function (event) { event.preventDefault(); return; });
+        $(list).delegate("li", "click", function (event) {
             event.preventDefault();
             $(list).children().removeClass("selected");
             $(event.currentTarget).addClass("selected");
@@ -774,7 +728,7 @@ $(function () {
         /**
          * Toolbar upload form event
          */
-        $(file_upload).on("change", (event) => {
+        $(file_upload).on("change", function (event) {
             let input = event.currentTarget;
 
             if (input.files && input.files[0]) {
@@ -819,32 +773,27 @@ $(function () {
             }
         });
 
-        $(editor_upload).on("change", ( event ) => {
+        $(editor_upload).on("change", function (event) {
             let input = event.currentTarget;
 
-            if ( input.files && input.files[0] ) {
-                var file            = input.files[0];
-                var mime            = file.type;
-                var name            = file.name.split(".").shift();
-                var reader          = new FileReader();
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+                var mime = file.type;
+                var name = file.name.split(".").shift();
+                var reader = new FileReader();
 
-                reader.readAsDataURL( file );
+                reader.readAsDataURL(file);
 
-                reader.onload = ( e ) => {
+                reader.onload = function (e) {
                     /**
                      * Base64 image, with mimetype tag
                      */
-                    let raw         = e.target.result;
+                    let raw = e.target.result;
 
                     /**
                      * Decoded image
                      */
-                    let content     = raw.substring( raw.search(";base64,") + ";base64,".length );
-
-                    /**
-                     * Position of the text cursor in the md editor
-                     */
-                    let cursor      = mde.codemirror.getCursor();
+                    let content = raw.substring(raw.search(";base64,") + ";base64,".length);
 
                     /**
                      * Upload image and obtain attachment url
@@ -852,20 +801,20 @@ $(function () {
                     $.ajax({
                         url: rcmail.url("embed"),
                         method: "POST",
-                        data: { 
+                        data: {
                             id: note.id,
                             title: name,
                             mime: mime,
                             content: content,
                             size: file.size,
                         }
-                    }).done(( response ) => {
+                    }).done(function (response) {
                         if (response.result === true) {
-                            mde.codemirror.replaceSelection("![" + response.data.title + "](" + response.link + ")");
-                        } 
+                            tiny_editor.paste("![" + response.data.title + "](" + response.link + ")");
+                        }
 
                         if (response.result === false) {
-                            rcmail.display_message( rcmail.gettext(response.error, "ddnotes"), "error" );
+                            rcmail.display_message(rcmail.gettext(response.error, "ddnotes"), "error");
                         }
                     });
                 }
@@ -876,39 +825,55 @@ $(function () {
          * Note deletion if "Delete" key is pressed and have a note selected
          * from the list
          */
-        $(document).keyup((event) => {
-            let selected    = $(list).find("li.selected").data();
-            let focus       = $(document.activeElement).prop("tagName").toLowerCase();
+        $(document).keyup(function (event) {
+            let selected = list.find("li.selected").data() !== undefined;
+            let focus = $(document.activeElement).prop("tagName").toLowerCase();
+            let del = event.keyCode === 46;
+            let isFocus = (focus !== "input" && focus !== "textarea" && focus !== "div");
+            let isDeletable = (del && isFocus && selected);
 
             // Delete key pressed and without focus on an input
-            if (event.key === "Delete" && selected !== undefined && focus === "body") {
-                delete_note(selected.id);
+            if (isDeletable) {
+                delete_note();
             }
         });
-        
+
         /**
          * Move throw note list with arrow keys
          */
-        $(document).keydown( ( event ) => {
-            let focus       = $(document.activeElement).prop("tagName").toLowerCase();
-            let prev        = $(list).find("li.selected").prev();
-            let next        = $(list).find("li.selected").next();
+        $(document).keydown(function (event) {
+            let selected = list.find("li.selected").data() !== undefined;
+            let focus = $(document.activeElement).prop("tagName").toLowerCase();
+            let prev = $(list).find("li.selected").prev();
+            let next = $(list).find("li.selected").next();
+            let notFirst = $(prev).length !== 0;
+            let notLast = $(next).length !== 0;
+            let up = event.keyCode === 38;
+            let down = event.keyCode === 40;
+            let esc = event.keyCode === 27;
+            let isFocus = (focus !== "input" && focus !== "textarea" && focus !== "div");
 
             // Up arrow
-            if (event.keyCode === 38 && focus === "body" && prev.length === 1) {
+            if (up && notFirst && isFocus) {
                 $(list).children().removeClass("selected");
                 $(prev).click();
             }
 
             // Down arrow
-            if (event.keyCode === 40 && focus === "body" && next.length === 1) {
+            if (down && notLast && isFocus) {
                 $(list).children().removeClass("selected");
                 $(next).click();
             }
 
             // If no note selected, we select the first
-            if ($(list).find("li.selected").length === 0) {
+            if ((up || down) && !selected) {
                 $(list).children().first().click();
+            }
+
+            // If ESC pressed, remove note show view
+            if (esc && isFocus) {
+                $(list).children().removeClass("selected");
+                show_blank_page();
             }
         });
         ///////////////////////////////////////////////////

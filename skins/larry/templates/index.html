@@ -1,7 +1,7 @@
 <roundcube:object name="doctype" value="html5" />
 <html>
 <head>
-<roundcube:include file="/includes/links.html" />
+    <roundcube:include file="/includes/links.html" />
 </head>
 <body class="noscroll">
 
@@ -12,13 +12,15 @@
         <!-- toolbar -->
         <div id="ddnotes_toolbar" class="toolbar" role="toolbar" aria-labelledby="aria-label-toolbar">
 
-            <roundcube:button type="link" command="new_note" prop="text/markdown" 
-            title="ddnotes.new_note" label="ddnotes.new_note" class="button insertsig active" innerClass="inner"
+            <roundcube:button type="link" command="new_note" title="ddnotes.new_note" label="ddnotes.new_note"
+            class="button insertsig active" innerClass="inner"
             onclick="return UI.toggle_popup('ddnotes_creation_submenu', event)" />
             
-            <roundcube:button type="link" command="new_note" prop="file" 
+            <roundcube:button type="link" command="new_note" prop="file" e
             title="ddnotes.upload" label="ddnotes.upload" class="button attach active" innerClass="inner" />
 
+            <roundcube:button type="link" command="send_note" prop="file" e
+            title="ddnotes.send_note" label="ddnotes.send_note" class="button forward disabled" classAct="button forward active" innerClass="inner" />
         </div>
         
         <div id="ddnotes_searchbox" class="searchbox">

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * DonDominio Notes
@@ -15,6 +17,7 @@
 class ddnotes_model
 {
     public static $tablename = "ddnotes";
+
     private $id;
     private $parent_id;
     private $user_id;
@@ -24,7 +27,7 @@ class ddnotes_model
     private $file_size;
     private $created;
     private $updated;
-    
+
     public function __construct()
     {
         $this->id           = 0;
@@ -43,7 +46,7 @@ class ddnotes_model
      *
      * @return integer
      */
-    public function getId() : int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -54,7 +57,7 @@ class ddnotes_model
      *
      * @return integer
      */
-    public function getParentId() : int
+    public function getParentId(): int
     {
         return $this->parent_id;
     }
@@ -64,7 +67,7 @@ class ddnotes_model
      *
      * @return integer
      */
-    public function getUserId() : int
+    public function getUserId(): int
     {
         return $this->user_id;
     }
@@ -74,7 +77,7 @@ class ddnotes_model
      *
      * @return string
      */
-    public function getMimeType() : string
+    public function getMimeType(): string
     {
         return $this->mimetype;
     }
@@ -84,7 +87,7 @@ class ddnotes_model
      *
      * @return string
      */
-    public function getTitle() : string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -116,18 +119,19 @@ class ddnotes_model
      *
      * @return void
      */
-    function getHumanFileSize() 
+    function getHumanFileSize()
     {
-        for($i = 0, $size = $this->file_size; ($size / 1024) > 0.9; $i++, $size /= 1024) {}
-        return round($size, [0,0,1,2,2,3,3,4,4][$i]).[" B"," kB"," MB"," GB"," TB"," PB"," EB"," ZB"," YB"][$i];
+        for ($i = 0, $size = $this->file_size; ($size / 1024) > 0.9; $i++, $size /= 1024) {
+        }
+        return round($size, [0, 0, 1, 2, 2, 3, 3, 4, 4][$i]) . [" B", " kB", " MB", " GB", " TB", " PB", " EB", " ZB", " YB"][$i];
     }
-    
+
     /**
      * Get DateTime object with creation time
      *
      * @return DateTime
      */
-    public function getCreated() : DateTime
+    public function getCreated(): DateTime
     {
         return $this->created;
     }
@@ -137,7 +141,7 @@ class ddnotes_model
      *
      * @return DateTime
      */
-    public function getUpdated() : DateTime
+    public function getUpdated(): DateTime
     {
         return $this->updated;
     }
@@ -147,7 +151,7 @@ class ddnotes_model
      *
      * @return array
      */
-    public function getMapFileTypeExtension() : array
+    public function getMapFileTypeExtension(): array
     {
         return [
             "text/plain"        => "txt",
@@ -165,7 +169,7 @@ class ddnotes_model
      *
      * @return string
      */
-    public function getMimeString() : string
+    public function getMimeString(): string
     {
         return "data:" . $this->mimetype . ";base64,";
     }
@@ -178,7 +182,7 @@ class ddnotes_model
     public function getSrcContent(): string
     {
         if ($this->isText()) {
-            return $this->getMimeString() . base64_encode( $this->getContent() );
+            return $this->getMimeString() . base64_encode($this->getContent());
         }
 
         return $this->getMimeString() . $this->getContent();
@@ -189,7 +193,7 @@ class ddnotes_model
      *
      * @return array
      */
-    public function getHumanMime() : array
+    public function getHumanMime(): array
     {
         $parse = $this->parseMime();
         return [
@@ -205,7 +209,7 @@ class ddnotes_model
      *
      * @return string
      */
-    public function getExtension() : string
+    public function getExtension(): string
     {
         return $this->getMapFileTypeExtension()[$this->getMimeType()];
     }
@@ -215,16 +219,16 @@ class ddnotes_model
      *
      * @return string
      */
-    public function getIcon() : string
+    public function getIcon(): string
     {
         // Note for default
         $class = "fas fa-sticky-note";
-        
+
         // Image for images
         if ($this->isImage()) {
             $class = "fas fa-file-image";
         }
-        
+
         // PDF for files
         if ($this->isFile()) {
             $class = "fas fa-file-pdf";
@@ -234,7 +238,7 @@ class ddnotes_model
             if ($this->parseMime()["subtype"] === "markdown") {
                 $class = "fab fa-markdown";
             }
-            
+
             if ($this->parseMime()["subtype"] === "html") {
                 $class = "fab fa-html5";
             }
@@ -253,7 +257,7 @@ class ddnotes_model
      * @param integer $parent
      * @return void
      */
-    public function setParentId(int $parent) : void
+    public function setParentId(int $parent): void
     {
         $this->parent_id = $parent;
     }
@@ -263,7 +267,7 @@ class ddnotes_model
      *
      * @return integer
      */
-    public function setUserId($user_id) : void
+    public function setUserId($user_id): void
     {
         $this->user_id = $user_id;
     }
@@ -276,7 +280,7 @@ class ddnotes_model
      * @param string $type
      * @return void
      */
-    public function setMimeType(string $mime) : void
+    public function setMimeType(string $mime): void
     {
         $this->mimetype = $mime;
     }
@@ -287,7 +291,7 @@ class ddnotes_model
      * @param string $title
      * @return void
      */
-    public function setTitle(string $title) : void
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -299,7 +303,7 @@ class ddnotes_model
      * @param string $note
      * @return void
      */
-    public function setContent(string $content) : void
+    public function setContent(string $content): void
     {
         $this->content = $content;
     }
@@ -310,9 +314,31 @@ class ddnotes_model
      * @param integer $size
      * @return void
      */
-    public function setFileSize(int $size) : void
+    public function setFileSize(int $size): void
     {
         $this->file_size = $size;
+    }
+
+    /**
+     * Set created time
+     *
+     * @param integer $time
+     * @return void
+     */
+    public function setCreated(int $time): void
+    {
+        $this->created = date("Y-m-d H:i:s", $time);
+    }
+
+    /**
+     * Set updated time
+     *
+     * @param integer $time
+     * @return void
+     */
+    public function setUpdated(int $time): void
+    {
+        $this->updated = date("Y-m-d H:i:s", $time);
     }
 
     /**
@@ -320,7 +346,7 @@ class ddnotes_model
      *
      * @return boolean
      */
-    public function isImage() : bool
+    public function isImage(): bool
     {
         return $this->parseMime()["type"] === "image";
     }
@@ -331,7 +357,7 @@ class ddnotes_model
      *
      * @return boolean
      */
-    public function isText() : bool
+    public function isText(): bool
     {
         return $this->parseMime()["type"] === "text";
     }
@@ -342,7 +368,7 @@ class ddnotes_model
      *
      * @return boolean
      */
-    public function isFile() : bool
+    public function isFile(): bool
     {
         $mime = $this->parseMime();
         return $mime["type"] === "application" && $mime["subtype"] === "pdf";
@@ -353,7 +379,7 @@ class ddnotes_model
      *
      * @return array
      */
-    public function parseMime() : array
+    public function parseMime(): array
     {
         list($type, $subtype) = explode("/", $this->getMimeType());
         return [0 => $type, "type" => $type, 1 => $subtype, "subtype" => $subtype];
@@ -365,17 +391,16 @@ class ddnotes_model
      * @param string $mime
      * @return boolean
      */
-    public static function isValidMime(string $mime) : bool
+    public static function isValidMime(string $mime): bool
     {
         list($type, $subtype) = explode("/", $mime);
         $formats = rcmail::get_instance()->config->get("ddnotes_config")["extensions"];
 
-        if ( array_key_exists( $type, $formats ) ) {
-            return in_array( $subtype, $formats[$type] );
+        if (array_key_exists($type, $formats)) {
+            return in_array($subtype, $formats[$type]);
         }
 
         return false;
-
     }
 
     /**
@@ -385,17 +410,19 @@ class ddnotes_model
      * @param integer $user_id
      * @return ddnotes_model[]
      */
-    public static function find(int $user_id) : array
+    public static function find(int $user_id): array
     {
         $db = rcmail_utils::db();
         $result = $db->query(
-            sprintf(   "SELECT `id`, `user_id`, `title`, `mimetype`, `file_size`, `ts_created`, `ts_updated`
+            sprintf(
+                "SELECT `id`, `user_id`, `title`, `mimetype`, `file_size`, `ts_created`, `ts_updated`
                         FROM " . $db->table_name(static::$tablename, true)
-                        . " WHERE `user_id` = %d"
-                        . " AND `parent_id` = 0"
-                        . " ORDER BY `ts_updated` DESC",
-                $user_id)
-            );
+                    . " WHERE `user_id` = %d"
+                    . " AND `parent_id` = 0"
+                    . " ORDER BY `ts_updated` DESC",
+                $user_id
+            )
+        );
 
         $results = [];
         while ($result && ($res = $db->fetch_assoc($result))) {
@@ -422,38 +449,41 @@ class ddnotes_model
      * @param integer $user_id
      * @return null|ddnotes_model
      */
-    public static function findOneById(int $id, int $user_id) : ?ddnotes_model
+    public static function findOneById(int $id, int $user_id): ?ddnotes_model
     {
         $db = rcmail_utils::db();
         $result = $db->query(
-            sprintf(    "SELECT * FROM " . $db->table_name(static::$tablename, true)
-                        ." WHERE `id` = %d "
-                        ." AND `user_id` = %d",
-                $id, $user_id)
-            );
+            sprintf(
+                "SELECT * FROM " . $db->table_name(static::$tablename, true)
+                    . " WHERE `id` = %d "
+                    . " AND `user_id` = %d",
+                $id,
+                $user_id
+            )
+        );
 
-            $note = null;
+        $note = null;
         if ($result && ($res = $db->fetch_assoc($result))) {
             $note = new static();
 
             $note->id           = (int) $res["id"];
             $note->user_id      = (int) $res["user_id"];
+            $note->parent_id    = (int) $res["parent_id"];
             $note->title        = $res["title"];
             $note->mimetype     = $res["mimetype"];
             $note->content      = $res["content"];
             $note->file_size    = (int) $res["file_size"];
             $note->created      = DateTime::createFromFormat("Y-m-d H:i:s", $res["ts_created"]);
             $note->updated      = DateTime::createFromFormat("Y-m-d H:i:s", $res["ts_updated"]);
-
         }
 
         return $note;
     }
 
-    public function save() : ddnotes_model
+    public function save(): ddnotes_model
     {
         $save_result = false;
-        if ( $this->id > 0 ) {
+        if ($this->id > 0) {
             $save_result = $this->update();
         } else {
             $save_result = $this->insert();
@@ -462,29 +492,31 @@ class ddnotes_model
         return $save_result;
     }
 
-    private function update() : ddnotes_model
+    private function update(): ddnotes_model
     {
         $db = rcmail_utils::db();
-        $query = sprintf(    "UPDATE " . $db->table_name(static::$tablename, true)
-                            . " SET "
-                                . " `title` = \"%s\", `content` = \"%s\", `file_size` = %d, `ts_updated` = \"%s\""
-                            . " WHERE `id` = %d "
-                                . " AND `user_id` = %d",
-                    $db->escape($this->title),
-                    $db->escape($this->content),
-                    $this->file_size,
-                    date("Y-m-d H:i:s"),
-                    $this->id,
-                    $this->user_id
+        $query = sprintf(
+            "UPDATE " . $db->table_name(static::$tablename, true)
+                . " SET "
+                . " `title` = \"%s\", `content` = \"%s\", `file_size` = %d, `ts_updated` = \"%s\""
+                . " WHERE `id` = %d "
+                . " AND `user_id` = %d",
+            $db->escape($this->title),
+            $db->escape($this->content),
+            $this->file_size,
+            date("Y-m-d H:i:s"),
+            $this->id,
+            $this->user_id
         );
 
         // We have a file so we don't update his content or filesize
-        if ( !$this->isText() ) {
-            $query = sprintf(    "UPDATE " . $db->table_name(static::$tablename, true)
-                        . " SET "
-                            . " `title` = \"%s\", `ts_updated` = \"%s\""
-                        . " WHERE `id` = %d "
-                            . " AND `user_id` = %d",
+        if (!$this->isText()) {
+            $query = sprintf(
+                "UPDATE " . $db->table_name(static::$tablename, true)
+                    . " SET "
+                    . " `title` = \"%s\", `ts_updated` = \"%s\""
+                    . " WHERE `id` = %d "
+                    . " AND `user_id` = %d",
                 $db->escape($this->title),
                 date('Y-m-d H:i:s'),
                 $this->id,
@@ -492,29 +524,31 @@ class ddnotes_model
             );
         }
 
-        $db->query( $query );
+        $db->query($query);
 
         return $this->findOneById($this->id, $this->user_id);
     }
 
-    private function insert() : ddnotes_model
+    private function insert(): ddnotes_model
     {
         $db = rcmail_utils::db();
         $db->query(
-            sprintf(    "INSERT INTO " . $db->table_name(static::$tablename, true) . " SET "
-                        . "`parent_id` = %d, "
-                        . "`user_id` = %d, "
-                        . "`title` = \"%s\", "
-                        . "`mimetype` = \"%s\", "
-                        . "`content` = \"%s\", "
-                        . "`file_size` = %d",
-                        $this->parent_id,
-                        $this->user_id,
-                        $db->escape($this->title),
-                        $this->mimetype,
-                        $db->escape($this->content),
-                        $this->file_size
-        ));
+            sprintf(
+                "INSERT INTO " . $db->table_name(static::$tablename, true) . " SET "
+                    . "`parent_id` = %d, "
+                    . "`user_id` = %d, "
+                    . "`title` = \"%s\", "
+                    . "`mimetype` = \"%s\", "
+                    . "`content` = \"%s\", "
+                    . "`file_size` = %d",
+                $this->parent_id,
+                $this->user_id,
+                $db->escape($this->title),
+                $this->mimetype,
+                $db->escape($this->content),
+                $this->file_size
+            )
+        );
 
         if ($insert_id = $db->insert_id($this->tablename)) {
             $this->id = (int) $insert_id;
@@ -523,46 +557,18 @@ class ddnotes_model
         return $this->findOneById($this->id, $this->user_id);
     }
 
-    public function delete() : bool
+    public function delete(): bool
     {
         $db = rcmail_utils::db();
         $db->query(
-            sprintf(    "DELETE FROM " . $db->table_name(static::$tablename, true) 
-                        . " WHERE `id` = %d"
-                        . " OR `parent_id` = %d",
-                        $this->id,
-                        $this->id,
-        ));
+            sprintf(
+                "DELETE FROM " . $db->table_name(static::$tablename, true)
+                    . " WHERE `id` = %d"
+                    . " OR `parent_id` = %d",
+                $this->id,
+                $this->id,
+            )
+        );
         return $db->affected_rows() === 1;
     }
-
-    public function getAttachments() : array
-    {
-        $db     = rcmail_utils::db();
-        $result = $db->query(sprintf(
-            "SELECT * FROM " . $db->table_name(static::$tablename, true)
-            . " WHERE `parent_id` = %d"
-            . " AND `user_id` = %d",
-            $this->getId(),
-            $this->getUserId()
-        ));
-
-        $attachments = [];
-        while ($result && ($res = $db->fetch_assoc($result))) {
-            $note = new static();
-            $note->id           = (int) $res["id"];
-            $note->user_id      = (int) $res["user_id"];
-            $note->title        = $res["title"];
-            $note->mimetype     = $res["mimetype"];
-            $note->content      = "";
-            $note->file_size    = (int) $res["file_size"];
-            $note->created      = DateTime::createFromFormat("Y-m-d H:i:s", $res["ts_created"]);
-            $note->updated      = DateTime::createFromFormat("Y-m-d H:i:s", $res["ts_updated"]);
-
-            $results[] = $note;
-        }
-
-        return $attachments;
-    }
-    
 }

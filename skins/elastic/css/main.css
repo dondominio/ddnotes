@@ -1,40 +1,24 @@
-/***************************
-* Wrappers
-****************************/
 div[id$="_wrapper"] {
     display: none;
 }
 
-/***************************
-* LISTADO DE NOTAS
-****************************/
-
-/* elementos del listado de notas */
 li.ddnotes_list_element {
     font-size: 1rem !important
 }
 
-/* Iconos de los elementos del listado */
-li.ddnotes_list_element i{
+li.ddnotes_list_element i {
     font-size: 1.25em;
     font-weight: 900;
 }
 
-/* Fecha de creación de la nota en el listado */
 li.ddnotes_list_element span.ddnotes_list_element_date {
     font-size: smaller;
 }
 
-/* Peso de la nota en el listado */
 li.ddnotes_list_element span.ddnotes_list_element_size {
     font-size: smaller;
 }
 
-/***************************
-* CONTENIDO CENTRAL
-****************************/
-
-/* Roundcube Watermark */
 #ddnotes_watermark {
     width: 100%;
     height: 100%;
@@ -43,24 +27,35 @@ li.ddnotes_list_element span.ddnotes_list_element_size {
 }
 
 #ddnotes_watermark::before {
-    content: ""; 
-    position: absolute; 
-    top: 0; 
-    bottom: 0; 
-    left: 0; 
-    right: 0; 
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: rgba(255, 255, 255, .85);
 }
 
-/* Default img max-height for xs portraits less than 576px*/
 #ddnotes_note_content img {
     max-width: 100%;
     max-height: 100%;
 }
 
-/* div de previsualización del contenido */
 #ddnotes_note_content {
     white-space: pre-wrap;
+}
+
+#ddnotes_note_content pre {
+    /* css-3 */
+    white-space: pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -moz-pre-wrap;
+    /* Opera 4-6 */
+    white-space: -pre-wrap;
+    /* Opera 7 */
+    white-space: -o-pre-wrap;
+    /* Internet Explorer 5.5+ */
+    word-wrap: break-word;
 }
 
 #ddnotes_show_note_wrapper {

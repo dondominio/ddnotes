@@ -3,7 +3,9 @@
     background-position: 0 0;
     display: inline-block;
 }
-#taskbar a.button-notes:hover span.button-inner, #taskbar a.button-notes.button-selected span.button-inner {
+
+#taskbar a.button-notes:hover span.button-inner,
+#taskbar a.button-notes.button-selected span.button-inner {
     background-position: 0 -24px;
 }
 
@@ -18,45 +20,45 @@
 
 #ddnotes_searchbox {
     position: absolute;
-	top: 2px;
-	right: 2px;
+    top: 2px;
+    right: 2px;
 }
 
 #ddnotes_searchbox input {
     width: 176px;
-	margin: 0;
-	padding: 3px 30px 3px 34px;
-	height: 18px;
-	background: #f1f1f1;
-	border-color: #ababab;
-	font-weight: bold;
-	font-size: 11px;
+    margin: 0;
+    padding: 3px 30px 3px 34px;
+    height: 18px;
+    background: #f1f1f1;
+    border-color: #ababab;
+    font-weight: bold;
+    font-size: 11px;
 }
 
 #ddnotes_searchbox a.reset {
     position: absolute;
-	top: 4px;
-	right: 1px;
-	width: 12px;
-	height: 12px;
-	display: inline-block;
-	margin: 0 2px;
-	padding: 3px 5px;
-	color: #525252;
-	text-decoration: none;
+    top: 4px;
+    right: 1px;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    margin: 0 2px;
+    padding: 3px 5px;
+    color: #525252;
+    text-decoration: none;
 }
 
 #ddnotes_searchbox a.searchicon {
     position: absolute;
-	top: 5px;
-	left: 6px;
-	width: 24px;
+    top: 5px;
+    left: 6px;
+    width: 24px;
 }
 
 #ddnotes_search_form {
     width: 240px;
 }
-    
+
 #ddnotes_sidebar {
     position: absolute;
     top: 0;
@@ -75,11 +77,13 @@
 }
 
 #ddnotes_sidebar_splitter {
-   left: 219px;
-   top: 0px; 
+    left: 219px;
+    top: 0px;
 }
 
+
 /* sidebar <ul> list of notes*/
+
 #ddnotes_list li.ddnotes_list_element {
     display: flex;
     align-items: stretch;
@@ -97,35 +101,35 @@
 
 #ddnotes_list .ddnotes_list_element_icon {
     display: flex;
-	min-width: 30px;
-	align-items: center;
-	align-content: center;
-	justify-content: center;
+    min-width: 30px;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
 }
 
 #ddnotes_list .ddnotes_list_element_info {
     display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	align-content: center;
-	width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    align-content: center;
+    width: 100%;
 }
 
 #ddnotes_list .ddnotes_list_element_title {
     display: flex;
-	align-items: stretch;
-	align-content: stretch;
-	align-self: stretch;
-	justify-content: stretch;
-	font-size: larger;
-	line-height: 20px;
+    align-items: stretch;
+    align-content: stretch;
+    align-self: stretch;
+    justify-content: stretch;
+    font-size: larger;
+    line-height: 20px;
 }
 
 #ddnotes_list .ddnotes_list_element_footer {
     display: flex;
-	align-items: stretch;
-	justify-content: space-between;
-	width: 100%;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
 }
 
 #ddnotes_list .ddnotes_list_element_ts {
@@ -140,24 +144,24 @@
 
 #ddnotes_content {
     position: absolute;
-	top: 0;
-	left: 229px;
-	right: 0;
-	bottom: 0;
+    top: 0;
+    left: 229px;
+    right: 0;
+    bottom: 0;
 }
 
 #ddnotes_content_wrapper {
     display: flex;
-	flex-direction: column;
+    flex-direction: column;
     align-items: stretch;
-	align-content: stretch;
-	align-self: stretch;
-	justify-content: stretch;
+    align-content: stretch;
+    align-self: stretch;
+    justify-content: stretch;
     position: absolute;
     top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     height: auto;
     background-color: #fff;
 }
@@ -171,18 +175,18 @@
     display: flex;
     align-items: stretch;
     background: rgb(249, 249, 249);
-	border-bottom: 1px solid rgb(223, 223, 223);
+    border-bottom: 1px solid rgb(223, 223, 223);
     height: auto;
-	min-height: 70px;
+    min-height: 70px;
     padding: 5px 15px;
 }
 
 #ddnotes_content_wrapper .ddnotes_note_headers_icon {
     display: flex;
-	align-items: center;
-	align-self: stretch;
-	justify-content: flex-start;
-	width: 55px;
+    align-items: center;
+    align-self: stretch;
+    justify-content: flex-start;
+    width: 55px;
 }
 
 #ddnotes_content_wrapper .ddnotes_note_headers_info {
@@ -190,16 +194,17 @@
     align-items: stretch;
     align-self: stretch;
     flex-direction: column;
+    justify-content: space-around;
     justify-content: space-evenly;
     width: 100%;
 }
 
 #ddnotes_content_wrapper .ddnotes_note_headers_actions {
     display: flex;
-	align-items: center;
-	align-self: stretch;
+    align-items: center;
+    align-self: stretch;
     justify-content: flex-end;
-	min-width: 120px;
+    min-width: 120px;
     gap: 12px;
 }
 
@@ -217,15 +222,15 @@
 
 #ddnotes_content_wrapper .ddnotes_note_file {
     display: flex;
-	height: 50%;
-	align-items: center;
-	justify-content: center;
+    height: 50%;
+    align-items: center;
+    justify-content: center;
 }
 
 #ddnotes_content_wrapper .ddnotes_note_file span {
     display: flex;
-	flex-direction: column;
-	align-items: center;
+    flex-direction: column;
+    align-items: center;
 }
 
 #ddnotes_content_wrapper .ddnotes_watermark_wrapper {
@@ -242,9 +247,10 @@
 
 #ddnotes_content_wrapper .ddnotes_editor_textarea_wrapper {
     display: flex;
-	align-items: stretch;
-	align-content: stretch;
-	justify-content: stretch;
+    align-items: stretch;
+    align-content: stretch;
+    justify-content: stretch;
+    flex-direction: column;
 }
 
 #ddnotes_content_wrapper .ddnotes_note_text img,
@@ -258,32 +264,53 @@
     white-space: pre-wrap;
 }
 
+#ddnotes_content_wrapper pre.ddnotes_note_text_pre pre {
+    /* css-3 */
+    white-space: pre-wrap;
+    /* Mozilla, since 1999 */
+    white-space: -moz-pre-wrap;
+    /* Opera 4-6 */
+    white-space: -pre-wrap;
+    /* Opera 7 */
+    white-space: -o-pre-wrap;
+    /* Internet Explorer 5.5+ */
+    word-wrap: break-word;
+}
+
+#ddnotes_content_wrapper div.scroller div {
+    font: inherit;
+    white-space: pre-wrap;
+}
+
 textarea.ddnotes_editor_textarea {
-    display: flex;
-	align-self: stretch;
-	justify-content: stretch;
     resize: none;
     border: none;
-    padding: 15px 0 15px 15px;
-	width: 100%;
-}
-
-.EasyMDEContainer {
-    display: flex;
-	flex-direction: column;
-    justify-content: stretch;
-	width: 100%;
-}
-
-.EasyMDEContainer .editor-toolbar {
-    border: none;
-    border-bottom: 1px solid #ddd;
-    border-top-left-radius: 0;
-	border-top-right-radius: 0;
-}
-
-.EasyMDEContainer .CodeMirror {
+    border-radius: 0px;
+    width: auto;
     height: 100%;
-    border: none;
-    z-index: 100;
+}
+
+div.TinyMDE {
+    height: 100%;
+}
+
+div.TinyMDE>div:last-child {
+    padding-bottom: 15px;
+}
+
+div.TMCommandBar {
+    background-color: #f0f0f0;
+    border-color: #f0f0f0;
+}
+
+div.TMCommandButton {
+    background-color: transparent;
+}
+
+div.TMCommandButton_Active,
+div.TMCommandButton_Active:hover {
+    font-weight: 700;
+    color: #fff;
+    background-color: #555c66;
+    fill: #fff;
 }

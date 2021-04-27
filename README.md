@@ -9,9 +9,7 @@ Besides, you can also upload PDF files and images to save them as notes. Any typ
 These technologies have been used to develop it:
 
 - [Roundcube](https://github.com/roundcube/roundcubemail)
-- [EasyMDE](https://github.com/Ionaru/easy-markdown-editor)
-- [CodeMirror](https://github.com/codemirror/CodeMirror)
-- [Highlight JS](https://github.com/highlightjs/highlight.js/)
+- [Tiny-markdown-editor](https://github.com/jefago/tiny-markdown-editor)
 - [Marked JS](https://github.com/markedjs/marked)
 - [DOMPurify](https://github.com/cure53/DOMPurify)
 - [FontAwesome](https://fontawesome.com/)
@@ -27,57 +25,58 @@ When downloading the plugin from GitHub you will need to create a directory call
 
 The file structure is the next:
 
-```bash
-ddnotes                                                 
-├─ SQL                                                  
-│  ├─ mssql.initial.sql                                 
-│  ├─ mysql.initial.sql                                 
-│  ├─ oracle.initial.sql                                
-│  ├─ postgres.initial.sql                              
-│  └─ sqlite.initial.sql                                
-├─ bin                                                  
-├─ includes                                             
-│  ├─ easymde                                           
-│  │  ├─ css                                            
-│  │  │  ├─ highlight                      
-│  │  │  └─ easymde.css                                 
-│  │  └─ js                                             
-│  │     ├─ DOMPurify                                   
-│  │     ├─ codemirror                                  
-│  │     ├─ highlight                                   
-│  │     ├─ marked                                      
-│  │     └─ easymde.min.js                              
-│  ├─ fontawesome                                       
-│  ├─ ddnotes_model.php                                 
-│  └─ ddnotes_response.php                              
-├─ localization                                         
-│  ├─ ca_ES.inc                                         
-│  ├─ en_US.inc                                         
-│  └─ es_ES.inc                                         
-├─ skins                                                
-│  ├─ elastic                                           
-│  │  ├─ css                                            
-│  │  │  └─ main.css                                    
-│  │  ├─ js                                             
-│  │  │  └─ main.js                                     
-│  │  └─ templates                                      
-│  │     └─ index.html                                  
-│  └─ larry                                             
-│     ├─ css                                            
-│     │  └─ main.css                                    
-│     ├─ js                                             
-│     │  └─ main.js                                     
-│     └─ templates                                      
-│        └─ index.html                                  
-├─ README.md                                            
-├─ composer.json                                        
-├─ config.inc.php.dist                                  
-└─ ddnotes.php                                          
 ```
-
+📦ddnotes
+ ┣ 📂includes
+ ┃ ┣ 📂DOMPurify
+ ┃ ┣ 📂fontawesome
+ ┃ ┣ 📂marked
+ ┃ ┣ 📂tinymde
+ ┃ ┣ 📜ddnotes_model.php
+ ┃ ┗ 📜ddnotes_response.php
+ ┣ 📂localization
+ ┃ ┣ 📜ca_ES.inc
+ ┃ ┣ 📜de_DE.inc
+ ┃ ┣ 📜en_US.inc
+ ┃ ┣ 📜es_ES.inc
+ ┃ ┗ 📜fr_FR.inc
+ ┣ 📂skins
+ ┃ ┣ 📂elastic
+ ┃ ┃ ┣ 📂css
+ ┃ ┃ ┃ ┗ 📜main.css
+ ┃ ┃ ┣ 📂js
+ ┃ ┃ ┃ ┗ 📜main.js
+ ┃ ┃ ┗ 📂templates
+ ┃ ┃ ┃ ┗ 📜index.html
+ ┃ ┗ 📂larry
+ ┃   ┣ 📂css
+ ┃   ┃ ┗ 📜main.css
+ ┃   ┣ 📂images
+ ┃   ┃ ┣ 📜note.png
+ ┃   ┃ ┣ 📜note_both.png
+ ┃   ┃ ┗ 📜note_selected.png
+ ┃   ┣ 📂js
+ ┃   ┃ ┗ 📜main.js
+ ┃   ┗ 📂templates
+ ┃     ┗ 📜index.html
+ ┣ 📂SQL
+ ┃ ┣ 📜mssql.initial.sql
+ ┃ ┣ 📜mysql.initial.sql
+ ┃ ┣ 📜oracle.initial.sql
+ ┃ ┣ 📜postgres.initial.sql
+ ┃ ┗ 📜sqlite.initial.sql
+ ┣ 📜LICENSE
+ ┣ 📜README.md
+ ┣ 📜composer.json
+ ┣ 📜config.inc.php.dist
+ ┣ 📜ddnotes.php
+ ┗ 📜defaults.inc.php
+```
 ### Configuration file
 
-At the fist folder level, you will find a file named `config.inc.php.dist`. You must copy it and rename the copy as `config.inc.php`.
+*This step is not mandatory. This plugin already comes with a `default.inc.php` with the necessary configuration to run correctly.*
+
+At the fist folder level, you will find a file named `config.inc.php.dist`. You must copy it and rename the copy as `config.inc.php` and edit plugin parameters.
 
 
 ```
@@ -85,7 +84,7 @@ cd plugins/ddnotes
 cp config.inc.php.dist config.inc.php
 ```
 
-In this file you can adjust the plugin settings to limit the extensions of the files it allows. Also the `upload_max_filesize` and the `max size` of the notes.
+In this file you can adjust the plugin settings to limit the extensions of the files it allows. Also the `upload_max_filesize` and the `note_max_filesize` of the notes.
 
 ```php
     /**
@@ -93,17 +92,17 @@ In this file you can adjust the plugin settings to limit the extensions of the f
      * The size of this column is not the same as the file size at the computer filesystem.
      * So this value must be always greatter than the upload_max_filesize.
      * This value is represented as bytes.
-     * Default 26214400 (25MB)
+     * null refers to no limit
      */
-    "note_max_filesize"        => 26214400,
+    "note_max_filesize" => null,
 
     /**
      * Max size of the files/images uploads.
      * This value must be always smaller than the note_max_filesize.
      * This value is represented as bytes.
-     * Default 8388608 (8MB)
+     * null refers to server upload_max_filesize
      */
-    "upload_max_filesize"      => 8388608,
+    "upload_max_filesize" => null,
 ```
 
 The allowed formats are the followings
@@ -118,29 +117,33 @@ The allowed formats are the followings
 
 #### Text
 - .txt
-- .md
+- .md (markdown)
 - .html
 
 This is the extensions default configuration at `config.inc.php.dist`
 ```php
+    /**
+     * Extensions that plugin supports
+     */
     "extensions" => [
-            /** 
-             * Image extensions for upload
-             */ 
-            "image" => ["jpg", "jpeg", "png"],
+        /** 
+         * Image extensions for upload
+         */ 
+        "image" => ["jpg", "jpeg", "png"],
 
-            /**
-             * File extensions for upload
-             */
-            "application" => ["pdf"],
+        /**
+         * File extensions for upload
+         */
+        "application" => ["pdf"],
 
-            /**
-             * Text file extensions for upload
-             * They must be plain text based because they will be used with the EasyMDE
-             * Tested with "markdown", "plain" and "html"
-             */
-            "text" => ["markdown", "plain", "html"],
-        ]
+        /**
+         * Text file extensions for upload
+         * They must be plain text based because they will be used with the editor
+         * Tested with "markdown", "plain" and "html"
+         * The first extension on this array will be the default at Elastic skin
+         */
+        "text" => ["plain", "markdown", "html"],
+    ]
 ```
 
 ### Editing `config.inc.php`
@@ -162,3 +165,5 @@ mysql -u USER -p PASS < /folder/to/roundcube/plugins/ddnotes/SQL/mysql.initial.s
 - es - Spanish
 - ca - Catalan
 - en - English
+- fr - French
+- de - Germany

@@ -11,6 +11,7 @@ $labels["title_toolbar"]        = "Note actions";
 $labels["taskbar_button"]       = "Notes";
 $labels["new_note"]             = "New";
 $labels["edit_note"]            = "Edit";
+$labels["send_note"]            = "Send";
 $labels["delete_note"]          = "Delete";
 $labels["upload"]               = "Upload";
 $labels["search"]               = "Search...";
@@ -66,7 +67,7 @@ $labels["no_title"]             = "No title";
 $labels["no_note"]              = "The note you are trying to load does not exist";
 $labels["invalid_type"]         = "Incorrect format";
 $labels["no_config"]            = "Failed to load plugin configuration";
-$labels["note_size_error"]      = "Total weight of note too high";
+$labels["note_size_error"]      = "Note weight too high";
 $labels["file_size_error"]      = "File weight too high";
 
 // Formats
@@ -82,5 +83,8 @@ $labels["document"]             = "Document";
 $labels["application"]          = "Document";
 $labels["pdf"]                  = "PDF";
 $labels["unknown"]              = "Unkown";
+
+// Compose subject
+$labels["compose_subject"]      = "Attached note: ";
 
 ?>

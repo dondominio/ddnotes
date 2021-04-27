@@ -11,6 +11,7 @@ $labels["title_toolbar"]        = "Accions sobre la nota";
 $labels["taskbar_button"]       = "Notes";
 $labels["new_note"]             = "Nova";
 $labels["edit_note"]            = "Editar";
+$labels["send_note"]            = "Enviar";
 $labels["delete_note"]          = "Eliminar";
 $labels["upload"]               = "Pujar";
 $labels["search"]               = "Cercar...";
@@ -82,5 +83,8 @@ $labels["document"]             = "Document";
 $labels["application"]          = "Document";
 $labels["pdf"]                  = "PDF";
 $labels["unknown"]              = "Desconegut";
+
+// Compose subject
+$labels["compose_subject"]      = "Nota adjunta: ";
 
 ?>

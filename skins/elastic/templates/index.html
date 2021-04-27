@@ -15,8 +15,8 @@
 
             <div class="toolbar menu d-none d-xl-block" role="toolbar" >
                 <span class="dropbutton" >
-                    <roundcube:button type="link" command="new_note" prop="text/markdown" 
-                    title="ddnotes.new_note" label="ddnotes.new_note" class="create active" innerclass="inner" />
+                    <roundcube:button type="link" command="new_note" title="ddnotes.new_note" label="ddnotes.new_note"
+                    class="create active" innerclass="inner" />
                     <a href="#more" class="dropdown" data-popup="ddnotes_creation_submenu">
                         <span class="inner"><roundcube:label name="more" /></span>
                     </a>
@@ -59,8 +59,9 @@
             <span class="header-title" style="margin: auto"></span>
 
             <div class="toolbar menu" id="ddnotes_toolbar_menu" role="toolbar">
-                <roundcube:button innerclass="inner" command="edit_note" type="link" class="edit" id="ddnotes_edit_note" label="ddnotes.edit_note" title="ddnotes.edit_note" />
-                <roundcube:button innerclass="inner" command="delete_note" type="link" class="delete" id="ddnotes_delete_note" label="ddnotes.delete_note" title="ddnotes.delete_note" />
+                <roundcube:button innerclass="inner" command="edit_note" type="link" class="edit disabled" classAct="edit" id="ddnotes_edit_note" label="ddnotes.edit_note" title="ddnotes.edit_note" />
+                <roundcube:button innerclass="inner" command="send_note" type="link" class="forward disabled" classAct="forward" id="ddnotes_send_note" label="ddnotes.send_note" title="ddnotes.send_note" />
+                <roundcube:button innerclass="inner" command="delete_note" type="link" class="delete disabled" classAct="delete" id="ddnotes_delete_note" label="ddnotes.delete_note" title="ddnotes.delete_note" />
             </div>
             
         </div>
@@ -137,6 +138,7 @@
                 <div class="row mt-5">
                     <div class="col-12">
                         <h3><roundcube:label name="ddnotes.note_content_label" /></h3>
+                        <div id="tinymde_toolbar"></div>
                         <textarea class="form-control" name="input_note_content" id="ddnotes_input_note_content" style="height: 371px;"></textarea>
                     </div>
                 </div>

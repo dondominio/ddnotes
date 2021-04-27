@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * DonDominio Notes
@@ -8,10 +10,10 @@
  * @copyright Copyright (c) 2021, SCIP
  * @license Apache-2
  */
-class ddnotes extends rcube_plugin 
+class ddnotes extends rcube_plugin
 {
     public $task = ".*";
-    private $config = [];    
+    private $config = [];
     private $user_id;
     public static $default_date_format = "d/m/Y H:i";
 
@@ -28,11 +30,11 @@ class ddnotes extends rcube_plugin
      * @var string like "larry"
      */
     private $skinName = '';
-    
+
     /**
      * Plugin initialization
      */
-    public function init() : void
+    public function init(): void
     {
         $rcmail         = rcmail::get_instance();
         $this->user_id  = (int) $rcmail->user->ID;
@@ -42,7 +44,7 @@ class ddnotes extends rcube_plugin
         $this->include_stylesheet($this->local_skin_path() . "/css/main.css");
         // remove prefixed "skins/"
         $this->skinName = substr($this->skinPath, 6);
-        
+
         // Main task /?task=ddnotes
         $this->register_task("ddnotes");
 
@@ -54,28 +56,20 @@ class ddnotes extends rcube_plugin
             "type"          => "link",
             "id"            => "ddnotes",
             "label"         => "ddnotes.taskbar_button",
-            "class"		    => "button-notes",
-			"classsel"	    => "button-notes button-selected",
+            "class"         => "button-notes",
+            "classsel"      => "button-notes button-selected",
             "innerclass"    => "button-inner",
-          ), "taskbar");
+        ), "taskbar");
 
-        if ($rcmail->task == "ddnotes") {
 
-            // Load plugin includes
-            $this->load_env();
+        if ($rcmail->task === "ddnotes") {
+            // Init plugin configuration and includes
+            $this->init_config();
+            $this->init_includes();
 
-            // load the plugin configuration
-            if ( !$this->load_config() ) {
-                $this->html->show_message("ddnotes.no_config", "error");
-            }
-
-            $this->config = $rcmail->config->get("ddnotes_config");
-            
-            $rcmail->output->set_env("ddnotes_config", $this->config);
-                        
             // Loads the main page of the plugin
             $this->register_action("index", array($this, "render"));
-            
+
             /**
              * Ajax actions
              */
@@ -87,6 +81,13 @@ class ddnotes extends rcube_plugin
             $this->register_action("embed", array($this, "embed"));
             // Retrieve notes list
             $this->register_action("refresh_list", array($this, "refresh_list"));
+
+            /**
+             * Register <roundcube:objects /> from html
+             */
+            $rcmail->output->add_handlers([
+                "ddnotes_creation_submenu" => [$this, "creation_submenu"],
+            ]);
 
             /**
              * Notes ajax actions (CRUD)
@@ -101,27 +102,27 @@ class ddnotes extends rcube_plugin
              * CSS includes
              */
             $this->include_stylesheet("includes/fontawesome/css/all.min.css");
-            $this->include_stylesheet("includes/easymde/css/easymde.css");
-            $this->include_stylesheet("includes/easymde/css/highlight/github-gist.css");
+            $this->include_stylesheet("includes/tinymde/tiny-mde.min.css");
 
             /**
              * JS includes
              */
-            $this->include_script("includes/easymde/js/easymde.min.js");
-            $this->include_script("includes/easymde/js/marked/marked.min.js");
-            $this->include_script("includes/easymde/js/highlight/highlight.pack.js");
-            $this->include_script("includes/easymde/js/DOMPurify/purify.js");
+            $this->include_script("includes/tinymde/tiny-mde.min.js");
+            $this->include_script("includes/marked/marked.min.js");
+            $this->include_script("includes/DOMPurify/purify.js");
             $this->include_script($this->local_skin_path() . "/js/main.js");
-
-            /**
-             * Register <roundcube:objects /> from html
-             */
-            $rcmail->output->add_handlers([
-                "ddnotes_creation_submenu"  => [$this, "creation_submenu"],
-            ]);
-             
         }
 
+        /**
+         * Send note as attachment via mail/compose hook
+         */
+        if ($rcmail->task === "mail" && $rcmail->action === "compose") {
+            // Init plugin configuration and includes
+            $this->init_config();
+            $this->init_includes();
+
+            $this->add_hook("message_compose", array($this, "message_compose"));
+        }
     }
 
     /**
@@ -129,7 +130,7 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function load_env() : void
+    function init_includes(): void
     {
         // Add include path for classes
         $include_path = $this->home . '/includes' . PATH_SEPARATOR;
@@ -137,20 +138,83 @@ class ddnotes extends rcube_plugin
         set_include_path($include_path);
     }
 
+    function init_config(): void
+    {
+        $rcmail = rcmail::get_instance();
+
+        // load the plugin configuration
+        if (!$this->load_config("defaults.inc.php")) {
+            rcube::raise_error(
+                [
+                    "code"      => 500,
+                    "type"      => "config",
+                    "file"      => "DDNotes plugin. File defaults.inc.php not loaded correctly",
+                    "line"      => __LINE__ - 5,
+                    "message"   => $rcmail->gettext("no_config", "ddnotes")
+                ],
+                true,
+                true
+            );
+        }
+        // Loads local config in case it exists
+        $this->load_config("config.inc.php");
+        $this->config = rcmail::get_instance()->config->get("ddnotes_config");
+
+        // Server upload_max_filesize VS DDNotes upload_max_filesize
+        $ddnotes_size = $this->config["upload_max_filesize"] ?? 0;
+        $app_size = rcube_utils::max_upload_size();
+
+        $app_size = rcube_utils::max_upload_size();
+        if ($ddnotes_size && $ddnotes_size < $app_size) {
+            $app_size = $ddnotes_size;
+        }
+
+        $this->config["upload_max_filesize"] = $app_size;
+
+        rcmail::get_instance()->output->set_env("ddnotes_config", $this->config);
+    }
+
+    /**
+     * Check if the size is greater than the supported size from the app
+     *
+     * @param Int $file_size
+     * @return boolean 
+     */
+    function check_max_upload($file_size): bool
+    {
+        return $this->config["upload_max_filesize"] >= $file_size;
+    }
+
+    /**
+     * Check for note max_size
+     *
+     * @param Int $note_content
+     * @return boolean
+     */
+    function check_max_note_size($content_size): bool
+    {
+        $note_size  = $this->config["note_max_filesize"];
+        if (is_null($note_size)) {
+            return $this->check_max_upload($content_size);
+        }
+
+        return $note_size >= $content_size;
+    }
+
     /**
      * Generate creation submenu html and commands
      *
      * @return string
      */
-    function creation_submenu($attrib) : string
+    function creation_submenu($attrib): string
     {
         $rcmail         = rcmail::get_instance();
         $text_formats   = $this->config["extensions"]["text"];
-        $items          = [];              
+        $items          = [];
         $list_class     = "menu listing";
         $items_class    = "create active";
 
-        if ( $this->skinName === "larry" ) {
+        if ($this->skinName === "larry") {
             $list_class     = "toolbarmenu";
             $items_class    = "active";
         }
@@ -158,25 +222,26 @@ class ddnotes extends rcube_plugin
         // $rcmail->output->button() already creates <li> wrapper for the button (link-menuitem)
         foreach ($text_formats as $format) {
             $items[] = $rcmail->output->button([
-                    "command"  => "new_note",
-                    "label"    => "ddnotes.$format",
-                    "class"    => $items_class,
-                    "type"     => "link-menuitem",
-                    "prop"     => "text/" . $format,
-                ]);
+                "command"  => "new_note",
+                "label"    => "ddnotes.$format",
+                "class"    => $items_class,
+                "type"     => "link-menuitem",
+                "prop"     => "text/" . $format,
+            ]);
         }
 
-        return  html::div(["id" => $attrib["name"], "class" => "popupmenu", "aria-hidden" => "true", "popup-pos" => "down"],
-                    html::tag("ul", ["role" => "menu", "class" => $list_class], implode("", $items))
-                );
+        return  html::div(
+            ["id" => $attrib["name"], "class" => "popupmenu", "aria-hidden" => "true", "popup-pos" => "down"],
+            html::tag("ul", ["role" => "menu", "class" => $list_class], implode("", $items))
+        );
     }
-    
+
     /**
      * Load template index
      * 
      * @return void
      */
-    function render() : void
+    function render(): void
     {
         $rcmail = rcmail::get_instance();
         $rcmail->output->set_pagetitle($this->gettext("browser_title"));
@@ -189,7 +254,7 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function view() : void
+    function view(): void
     {
         $rcmail     = rcmail::get_instance();
         $id         = (int) rcube_utils::get_input_value("_uid", rcube_utils::INPUT_GP);
@@ -202,15 +267,15 @@ class ddnotes extends rcube_plugin
         }
 
         header("Content-Description: Show Attachment");
-        header("Content-Disposition: inline; filename=\"" . $note->getTitle() . "." .  $note->getExtension() . "\"" );
+        header("Content-Disposition: inline; filename=\"" . $note->getTitle() . "." . $note->getExtension() . "\"");
         header("Content-Type: " . $note->getMimeType() . "; charset=" . $rcmail->output->get_charset());
         header("Content-Length: " . $note->getFileSize());
-        header("Last-Modified: " . $note->getUpdated()->setTimezone( new DateTimeZone('UTC') )->format("D, d M Y H:i:s \G\M\T"));
+        header("Last-Modified: " . $note->getUpdated()->setTimezone(new DateTimeZone('UTC'))->format("D, d M Y H:i:s \G\M\T"));
 
         if ($note->isText()) {
             echo $note->getContent();
         } else {
-            echo base64_decode( $note->getContent() );
+            echo base64_decode($note->getContent());
         }
 
         exit(0);
@@ -221,27 +286,26 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function new() : void
+    function new(): void
     {
         $rcmail     = rcmail::get_instance();
         $type       = rcube_utils::get_input_value("type", rcube_utils::INPUT_POST);
         $note       = new ddnotes_model();
         $response   = new \ddnotes_response();
 
-        if (is_null($type)) {
-            $rcmail->output->show_message("ddnotes.invalid_type", "error");
-            return;
+        if (is_null($type) || empty($type)) {
+            $type = "text/" . $this->config["extensions"]["text"][0];
         }
 
-        $note->setTitle( $rcmail->gettext("new_note", "ddnotes") );
+        $note->setTitle($rcmail->gettext("new_note", "ddnotes"));
         $note->setMimeType($type);
-        
+
         $note = $note->save();
-        
+
         $response->setFromNote($note);
         $rcmail->output->command("plugin.new", $response);
     }
-    
+
     /**
      * List all notes from a user
      * If you pass a Note ID, it will be send back
@@ -250,26 +314,26 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function list() : void
+    function list(): void
     {
         $rcmail     = rcmail::get_instance();
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
         $response   = new \ddnotes_response();
         $notes      = \ddnotes_model::find((int) $this->user_id);
 
-        if( empty($notes) ) {
+        if (empty($notes)) {
             $response->setResult(false);
             $rcmail->output->command("plugin.list", $response);
             return;
         }
-        
+
         if ($id === 0) {
             $response->setId($notes[0]->getId());
         } else {
             $response->setId($id);
         }
 
-        foreach($notes as $note) {
+        foreach ($notes as $note) {
             $response->addFromNote($note);
         }
 
@@ -281,13 +345,13 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function show() : void
+    function show(): void
     {
         $rcmail     = rcmail::get_instance();
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
         $response   = new ddnotes_response();
         $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
-        
+
         if (is_null($note)) {
             $rcmail->output->show_message("ddnotes.no_note", "error");
             return;
@@ -303,7 +367,7 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function update() : void
+    function update(): void
     {
         $rcmail     = rcmail::get_instance();
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
@@ -313,23 +377,35 @@ class ddnotes extends rcube_plugin
         $response   = new ddnotes_response();
         $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
 
+        // Check for note
         if (is_null($note)) {
+            $response->setResult(false);
             $response->setId($id);
             $rcmail->output->show_message("ddnotes.no_note", "error");
             $rcmail->output->command("plugin.update", $response);
             return;
         }
-        
+
+        // Check note size
+        if (!$this->check_max_note_size(strlen($content))) {
+            $response->setResult(false);
+            $response->setId($id);
+            $rcmail->output->show_message("ddnotes.note_size_error", "error");
+            $rcmail->output->command("plugin.update", $response);
+            return;
+        }
+
         $note->setTitle($title);
         $note->setContent($content);
-        
-       /**
+
+        /**
          *  if it's not a file, size is not defined correctly
          */
-        if ( $note->isText() ) {
+        if ($note->isText()) {
             $note->setFileSize(strlen($content));
         }
-        
+
+
         $note = $note->save();
 
         $response->setFromNote($note);
@@ -344,7 +420,7 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    public function delete() : void
+    public function delete(): void
     {
         $rcmail     = rcmail::get_instance();
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
@@ -358,13 +434,13 @@ class ddnotes extends rcube_plugin
         }
 
         $note->delete();
-        
+
         $rcmail->output->show_message("ddnotes.delete_confirmation", "confirmation");
 
         $rcmail->output->command("plugin.delete", $response);
     }
 
-    public function upload() : void
+    public function upload(): void
     {
         $rcmail         = rcmail::get_instance();
         $title          = rcube_utils::get_input_value("title", rcube_utils::INPUT_POST);
@@ -376,23 +452,29 @@ class ddnotes extends rcube_plugin
         $note           = new ddnotes_model();
 
         // Check mimetype
-        if ( !ddnotes_model::isValidMime($mimetype) ) {
+        if (!ddnotes_model::isValidMime($mimetype)) {
+            $response->setResult(false);
             $rcmail->output->show_message("ddnotes.invalid_type", "error");
-            return;
-        }
-        
-        // Check for file size
-        if ($size >= $this->config["upload_max_filesize"]) {
-            $rcmail->output->show_message("ddnotes.file_size_error", "error");
+            $rcmail->output->command("plugin.uploaded", $response);
             return;
         }
 
-        // Check for record size
-        if ( $size >= $this->config["note_max_filesize"]) {
-            $rcmail->output->show_message("ddnotes.note_size_error", "error");
+        // Check for file size
+        if (!$this->check_max_upload($size)) {
+            $response->setResult(false);
+            $rcmail->output->show_message("ddnotes.file_size_error", "error");
+            $rcmail->output->command("plugin.uploaded", $response);
             return;
         }
-        
+
+        // Check for content size
+        if (!$this->check_max_note_size(strlen($content))) {
+            $response->setResult(false);
+            $rcmail->output->show_message("ddnotes.note_size_error", "error");
+            $rcmail->output->command("plugin.uploaded", $response);
+            return;
+        }
+
         $note->setTitle($title);
         $note->setMimeType($mimetype);
         $note->setFileSize($size);
@@ -407,40 +489,40 @@ class ddnotes extends rcube_plugin
         $rcmail->output->command("plugin.uploaded", $response);
     }
 
-    public function embed() : void
+    public function embed(): void
     {
         $rcmail     = rcmail::get_instance();
         header("Content-Type: application/json; charset=" . $rcmail->output->get_charset());
-        
+
         $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
         $title      = rcube_utils::get_input_value("title", rcube_utils::INPUT_POST);
         $mimetype   = rcube_utils::get_input_value("mime", rcube_utils::INPUT_POST);
         $content    = rcube_utils::get_input_value("content", rcube_utils::INPUT_POST);
         $size       = (int) rcube_utils::get_input_value("size", rcube_utils::INPUT_POST);
-        
+
         $response   = new ddnotes_response();
-        $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
-        
+
         // Check mimetype
-        if ( !ddnotes_model::isValidMime($mimetype) ) {
+        if (!ddnotes_model::isValidMime($mimetype)) {
             $response->setResult(false);
             $response->setError("invalid_type");
             echo json_encode($response);
             exit;
         }
-        
+
         // Check for file size
-        if ($size >= $this->config["upload_max_filesize"]) {
+        if (!$this->check_max_upload($size)) {
             $response->setResult(false);
             $response->setError("file_size_error");
             echo json_encode($response);
             exit;
         }
 
-        // Check for record size
-        if ( $size >= $this->config["note_max_filesize"]) {
+        // Check for content size
+        if (!$this->check_max_note_size($content)) {
             $response->setResult(false);
-            $response->setError("ddnotes.note_size_error");
+            $response->setError("note_size_error");
+            echo json_encode($response);
             exit;
         }
 
@@ -455,23 +537,46 @@ class ddnotes extends rcube_plugin
 
         $response->setFromNote($embed);
 
-        echo json_encode( array_merge( $response->toArray(), ["link" => $rcmail->url(["_action" => "view", "_uid" => $embed->getId()], true, true)] ) );
+        echo json_encode(array_merge($response->toArray(), ["link" => $rcmail->url(["_action" => "view", "_uid" => $embed->getId()])]));
         exit;
     }
 
-    public function refresh_list() : void
+    public function refresh_list(): void
     {
         $rcmail     = rcmail::get_instance();
         $response   = new \ddnotes_response();
         $notes      = \ddnotes_model::find((int) $this->user_id);
-        
-        foreach($notes as $note) {
+
+        foreach ($notes as $note) {
             $response->addFromNote($note);
         }
 
         header("Content-Type: application/json; charset=" . $rcmail->output->get_charset());
-        echo json_encode( $response->toArray() );
+        echo json_encode($response->toArray());
         exit;
     }
 
+    public function message_compose($args): array
+    {
+        $id = (int) $args["param"]["ddnotes_id"];
+        $subject = $this->gettext("compose_subject");
+        $note = ddnotes_model::findOneById($id, (int) $this->user_id);
+
+        if ($note->isText()) {
+            $content = $note->getContent();
+        } else {
+            $content = base64_decode($note->getContent());
+        }
+
+        $args["attachments"][] = [
+            "name" => $note->getTitle() . "." . $note->getExtension(),
+            "mimetype" => $note->getMimeType(),
+            "data" => $content,
+            "size" => $note->getFileSize()
+        ];
+
+        $args["param"]["subject"] = $subject;
+
+        return $args;
+    }
 }

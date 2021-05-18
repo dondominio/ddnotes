@@ -562,6 +562,10 @@ class ddnotes extends rcube_plugin
         $subject = $this->gettext("compose_subject");
         $note = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
+        if ($id <= 0) {
+            return $args;
+        }
+
         if ($note instanceof \ddnotes_model) {
             if ($note->isText()) {
                 $content = $note->getContent();

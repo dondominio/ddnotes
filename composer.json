@@ -13,7 +13,7 @@
         "html"
     ],
     "homepage": "https://github.com/dondominio/ddnotes",
-    "license": "Apache-2.0",
+    "license": "LGPL-3.0-only",
     "type": "roundcube-plugin",
     "version": "1.0.1",
     "authors": [

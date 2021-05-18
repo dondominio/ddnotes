@@ -559,12 +559,13 @@ class ddnotes extends rcube_plugin
     public function message_compose($args): array
     {
         $id = (int) $args["param"]["ddnotes_id"];
-        $subject = $this->gettext("compose_subject");
-        $note = \ddnotes_model::findOneById($id, (int) $this->user_id);
-
+        
         if ($id <= 0) {
             return $args;
         }
+
+        $subject = $this->gettext("compose_subject");
+        $note = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
         if ($note instanceof \ddnotes_model) {
             if ($note->isText()) {

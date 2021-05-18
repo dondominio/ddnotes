@@ -1,0 +1,262 @@
+<roundcube:include file="includes/layout.html" />
+<roundcube:include file="includes/menu.html" />
+
+    <!-- Left sidebar -->
+    <div id="layout-sidebar" class="listbox selected ddnotes_sidebar_wrapper" role="navigation">
+
+        <!-- Header -->
+        <div class="header ddnotes_sidebar_header">
+            
+            <!-- Mobile Menu Button -->
+            <a class="button icon task-menu-button" href="#menu"><span class="inner"><roundcube:label name="menu" /></span></a>
+           
+            <!-- Header title -->
+            <span class="header-title d-block d-lg-none"><roundcube:label name="ddnotes.notes_list" /></span>
+
+            <div class="toolbar menu d-none d-xl-block" role="toolbar" >
+                <span class="dropbutton" >
+                    <roundcube:button type="link" command="new_note" title="ddnotes.new_note" label="ddnotes.new_note"
+                    class="create active" innerclass="inner" />
+                    <a href="#more" class="dropdown" data-popup="ddnotes_creation_submenu">
+                        <span class="inner"><roundcube:label name="more" /></span>
+                    </a>
+                </span>
+                <roundcube:button type="link" command="new_note" prop="file" title="ddnotes.upload" label="ddnotes.upload" class="upload active" innerclass="inner" />
+            </div>
+
+            <!-- Dots menu => Popup launcher -->
+            <roundcube:button name="creation_menu_dots" id="ddnotes_creation_menu_dots" type="link" class="button icon sidebar-menu d-block d-xl-none"
+            title="ddnotes.new_note" label="ddnotes.new_note" data-popup="ddnotes_creation_menu" innerclass="inner" />
+
+        </div>
+
+        <!-- Search input -->
+        <div role="search" class="searchbar menu">
+            <form id="ddnotes_search_form" method="POST">
+                <input name="ddnotes_search_input" id="ddnotes_search_input" placeholder="<roundcube:label name='ddnotes.search' />">
+            </form>
+            
+            <a class="button reset" href="#" onclick="$('#ddnotes_search_form').trigger('reset').trigger('submit')"></a>
+        </div>
+
+        <!-- Note list -->
+        <div class="scroller ddnotes_list_wrapper">
+            <ul id="ddnotes_notes_list" class="listing ddnotes_list"></ul>
+        </div>
+
+    </div>
+
+    <!-- Right content -->
+    <div id="layout-content" class="ddnotes_content_wrapper">
+
+        <!-- Header -->
+        <div class="header ddnotes_content_header">
+
+            <!-- Mobile Menu Button -->
+		    <a class="button icon back-sidebar-button d-block d-lg-none" href="#sideboard"><span class="inner"><roundcube:label name="back" /></span></a>
+
+		    <!-- Header title -->
+            <span class="header-title" style="margin: auto"></span>
+
+            <div class="toolbar menu" id="ddnotes_toolbar_menu" role="toolbar">
+                <roundcube:button innerclass="inner" command="edit_note" type="link" class="edit disabled" classAct="edit" id="ddnotes_edit_note" label="ddnotes.edit_note" title="ddnotes.edit_note" />
+                <roundcube:button innerclass="inner" command="send_note" type="link" class="forward disabled" classAct="forward" id="ddnotes_send_note" label="ddnotes.send_note" title="ddnotes.send_note" />
+                <roundcube:button innerclass="inner" command="delete_note" type="link" class="delete disabled" classAct="delete" id="ddnotes_delete_note" label="ddnotes.delete_note" title="ddnotes.delete_note" />
+            </div>
+            
+        </div>
+        
+        <div class="content scroller ddnotes_content">
+
+            <!-- Roundcube watermark -->
+            <div id="ddnotes_watermark" class="container-fluid"></div>
+            
+            <!-- Hidden note inputs -->
+            <div id="ddnotes_headers_wrapper" class="container" style="display: none;">
+                
+                <form id="ddnotes_form" method="POST" enctype="multipart/form-data">
+
+                    <div class="form-row mt-5">
+                        <div class="form-group col-6">
+                            <label for="form_id"><roundcube:label name="ddnotes.note_id_label" /></label>
+                            <input class="form-control" name="form_id" id="ddnotes_form_id">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="form_type"><roundcube:label name="ddnotes.note_type_label" /></label>
+                            <input class="form-control" name="form_type" id="ddnotes_form_type">
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-5">
+                        <div class="form-group col-12">
+                            <label for="form_content"><roundcube:label name="ddnotes.note_content_label" /></label>
+                            <textarea class="form-control" name="form_content" id="ddnotes_form_content"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row mt-5">
+                        <div class="form-group col-12">
+                            <label for="form_size"><roundcube:label name="ddnotes.size_label" /></label>
+                            <input class="form-control" name="form_size" id="ddnotes_form_size">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row mt-5">
+                        <div class="form-group col-12">
+                            <label for="form_upload"><roundcube:label name="ddnotes.note_file_label" /></label>
+                            <input type="file" class="form-control-file" name="form_upload" id="ddnotes_form_upload">
+                        </div>
+                    </div>
+    
+                </form>
+
+                <div class="row">
+                    <div class="col-12">
+                        <label for="image_upload"></label>
+                        <input type="file" class="form-control-file" name="image_upload" id="ddnotes_image_upload" style="display: none;" />
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- Note Title -->
+            <div id="ddnotes_note_title_wrapper" class="container" style="display: none;">
+            
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <label for="input_note_title"><roundcube:label name="ddnotes.note_title_label" /></label>
+                        <input class="form-control" name="input_note_title" id="ddnotes_input_note_title">
+                    </div>
+                </div>
+                
+            </div>
+
+            <!-- New Markdown Note -->
+            <div id="ddnotes_editor_wrapper" class="container" style="display: none;">
+
+                <!-- Note textarea for the editor -->
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3><roundcube:label name="ddnotes.note_content_label" /></h3>
+                        <div id="tinymde_toolbar"></div>
+                        <textarea class="form-control" name="input_note_content" id="ddnotes_input_note_content" style="height: 371px;"></textarea>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Image uploaded preview -->
+            <div id="ddnotes_upload_image_wrapper" class="container" style="display: none;">
+            
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3><roundcube:label name="ddnotes.note_content_label" /></h3>
+                        <figure class="figure" style="width: inherit; text-align: center;">
+                            <img class="figure-img img-fluid rounded" src="" />
+                        </figure>
+                    </div>
+                </div>
+            
+            </div>
+
+            <!-- File uploaded preview -->
+            <div id="ddnotes_upload_file_wrapper" class="container" style="display: none;">
+            
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h3><roundcube:label name="ddnotes.note_content_label" /></h3>
+                        <div class="my-5 text-center">
+                            <i class="fa fa-file fa-5x"></i>
+                        </div>
+                    </div>
+                </div>
+            
+            </div>
+
+            <!-- Note show -->
+            <div id="ddnotes_show_note_wrapper" style="display: none;">
+
+                <!-- Note Title -->
+                <div class="ddnotes_sticky_title sticky-top px-3 pt-3">
+
+                    <div class="row ddnotes_note_title">
+                        <div class="col-12">
+                            <div class="ddnotes_message_header">
+                                <div class="row">
+                                    <div class="col-8 text-truncate">
+                                        <h2 id="ddnotes_note_title" class='subject'></h2>
+                                    </div>
+                                    <div class="col text-right">
+                                        <a href="#" id="ddnotes_download_button" class="btn btn-secondary"><i class="fa fa-download"></i>&nbsp;<roundcube:label name="ddnotes.download" /></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                </div>
+                
+                <div class="ddnotes_note_content px-3 pb-3">
+
+                    <div id="ddnotes_note_content"></div>                       
+
+                </div>
+                    
+            </div>
+
+            <!-- Image edit -->
+            <div id="ddnotes_show_image_wrapper" class="container-fluid py-3" style="display: none">
+                <div class="row">
+                    <div class="col-12">
+                        <figure class="figure" style="width:inherit; text-align:center">
+                            <img class="figure-img img-fluid rounded" src=""/>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+
+            <!-- File edit -->
+            <div id="ddnotes_show_file_wrapper" class="container-fluid py-3" style="display: none">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="my-5 text-center">
+                            <i class="fa fa-file fa-5x"></i>
+                            <p class="ddnotes_file_size"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div id="ddnotes_buttons_wrapper" class="container py-3" style="display: none;">
+                <div class="row">
+                    <div class="col-6">
+                        <roundcube:button command="cancel_edit" class="btn btn-secondary cancel" id="ddnotes_cancel_button" label="ddnotes.cancel" />
+                    </div>
+
+                    <div class="col-6 text-right">
+                        <roundcube:button command="update_note" class="btn btn-primary submit" id="ddnotes_save_button" label="ddnotes.save" />
+                        <roundcube:button command="update_note" class="btn btn-primary submit" id="ddnotes_update_button" label="ddnotes.update" />
+                        <roundcube:button command="upload_file" class="btn btn-primary submit" id="ddnotes_upload_button" label="ddnotes.upload" />
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Dots menu -->
+    <div id="ddnotes_creation_menu" class="popupmenu">
+        <ul class="menu listing" role="menu">
+            <roundcube:button type="link-menuitem" command="new_note" prop="text/markdown" title="ddnotes.new_note" label="ddnotes.new_note" class="create" />
+            <roundcube:button type="link-menuitem" command="open_submenu" aria-haspopup="true" title="more" label="more" class="create disabled" classAct="create active" innerclass="inner" />
+            <roundcube:button type="link-menuitem" command="new_note" prop="file" title="ddnotes.upload" label="ddnotes.upload" class="upload active" innerclass="inner" />
+        </ul>
+    </div>
+
+    <roundcube:object name="ddnotes_creation_submenu" />
+
+<roundcube:include file="includes/footer.html" />

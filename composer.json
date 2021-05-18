@@ -1,7 +1,17 @@
 {
     "name": "dondominio/ddnotes",
     "description": "Plugin to manage notes within the mailbox. The main advatatge of this plugin is its way of saving this notes, directly on the database.",
-    "keywords": ["notes", "plugin", "database", "dondominio", "dd", "markdown", "images", "pdf", "html"],
+    "keywords": [
+        "notes",
+        "plugin",
+        "database",
+        "dondominio",
+        "dd",
+        "markdown",
+        "images",
+        "pdf",
+        "html"
+    ],
     "homepage": "https://github.com/dondominio/ddnotes",
     "license": "Apache-2.0",
     "type": "roundcube-plugin",
@@ -16,16 +26,14 @@
     ],
     "repositories": [
         {
-          "type": "composer",
-          "url": "http://plugins.roundcube.net"
+            "type": "composer",
+            "url": "https://plugins.roundcube.net"
         }
     ],
     "require": {
-        "php": ">= 7.4.0",
-        "roundcube/plugin-installer"    : "*"
+        "php": ">= 7.3"
     },
-    "extra":
-    {
+    "extra": {
         "roundcube": {
             "min-version": "1.4.11",
             "sql-dir": "SQL"

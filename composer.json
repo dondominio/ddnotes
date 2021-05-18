@@ -5,7 +5,7 @@
     "homepage": "https://github.com/dondominio/ddnotes",
     "license": "Apache-2.0",
     "type": "roundcube-plugin",
-    "version": "1.0",
+    "version": "1.0.1",
     "authors": [
         {
             "name": "Soluciones Corporativas IP, SL",

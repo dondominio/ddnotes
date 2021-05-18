@@ -36,7 +36,7 @@ class ddnotes extends rcube_plugin
      */
     public function init(): void
     {
-        $rcmail         = rcmail::get_instance();
+        $rcmail         = \rcmail::get_instance();
         $this->user_id  = (int) $rcmail->user->ID;
 
         $this->skinPath = $this->local_skin_path();
@@ -130,7 +130,7 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function init_includes(): void
+    public function init_includes(): void
     {
         // Add include path for classes
         $include_path = $this->home . '/includes' . PATH_SEPARATOR;
@@ -138,13 +138,13 @@ class ddnotes extends rcube_plugin
         set_include_path($include_path);
     }
 
-    function init_config(): void
+    public function init_config(): void
     {
-        $rcmail = rcmail::get_instance();
+        $rcmail = \rcmail::get_instance();
 
         // load the plugin configuration
         if (!$this->load_config("defaults.inc.php")) {
-            rcube::raise_error(
+            \rcube::raise_error(
                 [
                     "code"      => 500,
                     "type"      => "config",
@@ -158,20 +158,20 @@ class ddnotes extends rcube_plugin
         }
         // Loads local config in case it exists
         $this->load_config("config.inc.php");
-        $this->config = rcmail::get_instance()->config->get("ddnotes_config");
+        $this->config = \rcmail::get_instance()->config->get("ddnotes_config");
 
         // Server upload_max_filesize VS DDNotes upload_max_filesize
         $ddnotes_size = $this->config["upload_max_filesize"] ?? 0;
-        $app_size = rcube_utils::max_upload_size();
+        $app_size = \rcube_utils::max_upload_size();
 
-        $app_size = rcube_utils::max_upload_size();
+        $app_size = \rcube_utils::max_upload_size();
         if ($ddnotes_size && $ddnotes_size < $app_size) {
             $app_size = $ddnotes_size;
         }
 
         $this->config["upload_max_filesize"] = $app_size;
 
-        rcmail::get_instance()->output->set_env("ddnotes_config", $this->config);
+        \rcmail::get_instance()->output->set_env("ddnotes_config", $this->config);
     }
 
     /**
@@ -180,7 +180,7 @@ class ddnotes extends rcube_plugin
      * @param Int $file_size
      * @return boolean 
      */
-    function check_max_upload($file_size): bool
+    public function check_max_upload($file_size): bool
     {
         return $this->config["upload_max_filesize"] >= $file_size;
     }
@@ -191,7 +191,7 @@ class ddnotes extends rcube_plugin
      * @param Int $note_content
      * @return boolean
      */
-    function check_max_note_size($content_size): bool
+    public function check_max_note_size($content_size): bool
     {
         $note_size  = $this->config["note_max_filesize"];
         if (is_null($note_size)) {
@@ -206,9 +206,9 @@ class ddnotes extends rcube_plugin
      *
      * @return string
      */
-    function creation_submenu($attrib): string
+    public function creation_submenu($attrib): string
     {
-        $rcmail         = rcmail::get_instance();
+        $rcmail         = \rcmail::get_instance();
         $text_formats   = $this->config["extensions"]["text"];
         $items          = [];
         $list_class     = "menu listing";
@@ -230,9 +230,9 @@ class ddnotes extends rcube_plugin
             ]);
         }
 
-        return  html::div(
+        return \html::div(
             ["id" => $attrib["name"], "class" => "popupmenu", "aria-hidden" => "true", "popup-pos" => "down"],
-            html::tag("ul", ["role" => "menu", "class" => $list_class], implode("", $items))
+            \html::tag("ul", ["role" => "menu", "class" => $list_class], implode("", $items))
         );
     }
 
@@ -241,9 +241,9 @@ class ddnotes extends rcube_plugin
      * 
      * @return void
      */
-    function render(): void
+    public function render(): void
     {
-        $rcmail = rcmail::get_instance();
+        $rcmail = \rcmail::get_instance();
         $rcmail->output->set_pagetitle($this->gettext("browser_title"));
 
         $rcmail->output->send("ddnotes.index");
@@ -254,11 +254,11 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function view(): void
+    public function view(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $id         = (int) rcube_utils::get_input_value("_uid", rcube_utils::INPUT_GP);
-        $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
+        $rcmail     = \rcmail::get_instance();
+        $id         = (int) \rcube_utils::get_input_value("_uid", \rcube_utils::INPUT_GP);
+        $note       = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
         // If note not found, send a 404 headers
         if (is_null($note)) {
@@ -286,11 +286,11 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function new(): void
+    public function new(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $type       = rcube_utils::get_input_value("type", rcube_utils::INPUT_POST);
-        $note       = new ddnotes_model();
+        $rcmail     = \rcmail::get_instance();
+        $type       = \rcube_utils::get_input_value("type", \rcube_utils::INPUT_POST);
+        $note       = new \ddnotes_model();
         $response   = new \ddnotes_response();
 
         if (is_null($type) || empty($type)) {
@@ -314,10 +314,10 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function list(): void
+    public function list(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
+        $rcmail     = \rcmail::get_instance();
+        $id         = (int) \rcube_utils::get_input_value("id", \rcube_utils::INPUT_POST);
         $response   = new \ddnotes_response();
         $notes      = \ddnotes_model::find((int) $this->user_id);
 
@@ -345,12 +345,12 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function show(): void
+    public function show(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
-        $response   = new ddnotes_response();
-        $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
+        $rcmail     = \rcmail::get_instance();
+        $id         = (int) \rcube_utils::get_input_value("id", \rcube_utils::INPUT_POST);
+        $response   = new \ddnotes_response();
+        $note       = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
         if (is_null($note)) {
             $rcmail->output->show_message("ddnotes.no_note", "error");
@@ -367,15 +367,15 @@ class ddnotes extends rcube_plugin
      *
      * @return void
      */
-    function update(): void
+    public function update(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
-        $title      = rcube_utils::get_input_value("name", rcube_utils::INPUT_POST);
-        $content    = rcube_utils::get_input_value("content", rcube_utils::INPUT_POST, true);
+        $rcmail     = \rcmail::get_instance();
+        $id         = (int) \rcube_utils::get_input_value("id", \rcube_utils::INPUT_POST);
+        $title      = \rcube_utils::get_input_value("name", \rcube_utils::INPUT_POST);
+        $content    = \rcube_utils::get_input_value("content", \rcube_utils::INPUT_POST, true);
 
-        $response   = new ddnotes_response();
-        $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
+        $response   = new \ddnotes_response();
+        $note       = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
         // Check for note
         if (is_null($note)) {
@@ -422,10 +422,10 @@ class ddnotes extends rcube_plugin
      */
     public function delete(): void
     {
-        $rcmail     = rcmail::get_instance();
-        $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
-        $response   = new ddnotes_response();
-        $note       = ddnotes_model::findOneById($id, (int) $this->user_id);
+        $rcmail     = \rcmail::get_instance();
+        $id         = (int) \rcube_utils::get_input_value("id", \rcube_utils::INPUT_POST);
+        $response   = new \ddnotes_response();
+        $note       = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
         if (is_null($note)) {
             $rcmail->output->show_message("ddnotes.no_note", "error");
@@ -442,17 +442,17 @@ class ddnotes extends rcube_plugin
 
     public function upload(): void
     {
-        $rcmail         = rcmail::get_instance();
-        $title          = rcube_utils::get_input_value("title", rcube_utils::INPUT_POST);
-        $mimetype       = rcube_utils::get_input_value("mime", rcube_utils::INPUT_POST);
-        $content        = rcube_utils::get_input_value("content", rcube_utils::INPUT_POST);
-        $size           = (int) rcube_utils::get_input_value("size", rcube_utils::INPUT_POST);
+        $rcmail         = \rcmail::get_instance();
+        $title          = \rcube_utils::get_input_value("title", \rcube_utils::INPUT_POST);
+        $mimetype       = \rcube_utils::get_input_value("mime", \rcube_utils::INPUT_POST);
+        $content        = \rcube_utils::get_input_value("content", \rcube_utils::INPUT_POST);
+        $size           = (int) \rcube_utils::get_input_value("size", \rcube_utils::INPUT_POST);
 
-        $response       = new ddnotes_response();
-        $note           = new ddnotes_model();
+        $response       = new \ddnotes_response();
+        $note           = new \ddnotes_model();
 
         // Check mimetype
-        if (!ddnotes_model::isValidMime($mimetype)) {
+        if (!\ddnotes_model::isValidMime($mimetype)) {
             $response->setResult(false);
             $rcmail->output->show_message("ddnotes.invalid_type", "error");
             $rcmail->output->command("plugin.uploaded", $response);
@@ -491,19 +491,19 @@ class ddnotes extends rcube_plugin
 
     public function embed(): void
     {
-        $rcmail     = rcmail::get_instance();
+        $rcmail     = \rcmail::get_instance();
         header("Content-Type: application/json; charset=" . $rcmail->output->get_charset());
 
-        $id         = (int) rcube_utils::get_input_value("id", rcube_utils::INPUT_POST);
-        $title      = rcube_utils::get_input_value("title", rcube_utils::INPUT_POST);
-        $mimetype   = rcube_utils::get_input_value("mime", rcube_utils::INPUT_POST);
-        $content    = rcube_utils::get_input_value("content", rcube_utils::INPUT_POST);
-        $size       = (int) rcube_utils::get_input_value("size", rcube_utils::INPUT_POST);
+        $id         = (int) \rcube_utils::get_input_value("id", \rcube_utils::INPUT_POST);
+        $title      = \rcube_utils::get_input_value("title", \rcube_utils::INPUT_POST);
+        $mimetype   = \rcube_utils::get_input_value("mime", \rcube_utils::INPUT_POST);
+        $content    = \rcube_utils::get_input_value("content", \rcube_utils::INPUT_POST);
+        $size       = (int) \rcube_utils::get_input_value("size", \rcube_utils::INPUT_POST);
 
-        $response   = new ddnotes_response();
+        $response   = new \ddnotes_response();
 
         // Check mimetype
-        if (!ddnotes_model::isValidMime($mimetype)) {
+        if (!\ddnotes_model::isValidMime($mimetype)) {
             $response->setResult(false);
             $response->setError("invalid_type");
             echo json_encode($response);
@@ -526,7 +526,7 @@ class ddnotes extends rcube_plugin
             exit;
         }
 
-        $embed = new ddnotes_model();
+        $embed = new \ddnotes_model();
         $embed->setParentId($id);
         $embed->setTitle($title);
         $embed->setMimeType($mimetype);
@@ -543,7 +543,7 @@ class ddnotes extends rcube_plugin
 
     public function refresh_list(): void
     {
-        $rcmail     = rcmail::get_instance();
+        $rcmail     = \rcmail::get_instance();
         $response   = new \ddnotes_response();
         $notes      = \ddnotes_model::find((int) $this->user_id);
 
@@ -560,22 +560,24 @@ class ddnotes extends rcube_plugin
     {
         $id = (int) $args["param"]["ddnotes_id"];
         $subject = $this->gettext("compose_subject");
-        $note = ddnotes_model::findOneById($id, (int) $this->user_id);
+        $note = \ddnotes_model::findOneById($id, (int) $this->user_id);
 
-        if ($note->isText()) {
-            $content = $note->getContent();
-        } else {
-            $content = base64_decode($note->getContent());
+        if ($note instanceof \ddnotes_model) {
+            if ($note->isText()) {
+                $content = $note->getContent();
+            } else {
+                $content = base64_decode($note->getContent());
+            }
+
+            $args["attachments"][] = [
+                "name" => $note->getTitle() . "." . $note->getExtension(),
+                "mimetype" => $note->getMimeType(),
+                "data" => $content,
+                "size" => $note->getFileSize()
+            ];
+
+            $args["param"]["subject"] = $subject;
         }
-
-        $args["attachments"][] = [
-            "name" => $note->getTitle() . "." . $note->getExtension(),
-            "mimetype" => $note->getMimeType(),
-            "data" => $content,
-            "size" => $note->getFileSize()
-        ];
-
-        $args["param"]["subject"] = $subject;
 
         return $args;
     }

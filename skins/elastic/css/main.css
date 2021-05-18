@@ -66,3 +66,8 @@ div.ddnotes_sticky_title {
     top: -1px;
     background-color: #fff;
 }
+
+div.tinyMDE {
+    min-height: 300px;
+    background-color: #f4f4f4;
+}

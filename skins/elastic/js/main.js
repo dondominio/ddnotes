@@ -121,6 +121,17 @@ $(function () {
                 $(form_content).val("");
 
                 note_title_wrapper.show();
+
+                if (response.data.isText) {
+
+                    if (response.data.extension == "txt") {
+                        $("#tinymde_toolbar").empty();
+                        $("div.TinyMDE").remove();
+                        input_note_content.show();
+                    }
+
+                }
+
                 editor_wrapper.show();
                 buttons_wrapper.show();
                 save_button.show();

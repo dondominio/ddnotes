@@ -236,7 +236,7 @@ $(function () {
         rcmail.addEventListener("plugin.delete", function (response) {
             hide_all();
             reset_form();
-            load_notes(-1);
+            refresh_list();
         });
 
         rcmail.addEventListener("plugin.uploaded", function (response) {

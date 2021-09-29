@@ -498,7 +498,7 @@ class ddnotes_model
         $query = sprintf(
             "UPDATE " . $db->table_name(static::$tablename, true)
                 . " SET "
-                . " `title` = \"%s\", `content` = \"%s\", `file_size` = %d, `ts_updated` = \"%s\""
+                . " `title` = '%s', `content` = '%s', `file_size` = %d, `ts_updated` = '%s'"
                 . " WHERE `id` = %d "
                 . " AND `user_id` = %d",
             $db->escape($this->title),
@@ -514,7 +514,7 @@ class ddnotes_model
             $query = sprintf(
                 "UPDATE " . $db->table_name(static::$tablename, true)
                     . " SET "
-                    . " `title` = \"%s\", `ts_updated` = \"%s\""
+                    . " `title` = '%s', `ts_updated` = '%s'"
                     . " WHERE `id` = %d "
                     . " AND `user_id` = %d",
                 $db->escape($this->title),
@@ -537,9 +537,9 @@ class ddnotes_model
                 "INSERT INTO " . $db->table_name(static::$tablename, true) . " SET "
                     . "`parent_id` = %d, "
                     . "`user_id` = %d, "
-                    . "`title` = \"%s\", "
-                    . "`mimetype` = \"%s\", "
-                    . "`content` = \"%s\", "
+                    . "`title` = '%s', "
+                    . "`mimetype` = '%s', "
+                    . "`content` = '%s', "
                     . "`file_size` = %d",
                 $this->parent_id,
                 $this->user_id,

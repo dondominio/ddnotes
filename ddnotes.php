@@ -322,7 +322,7 @@ class ddnotes extends rcube_plugin
         $notes      = \ddnotes_model::find((int) $this->user_id);
 
         if (empty($notes)) {
-            $response->setResult(false);
+            // $response->setResult(false);
             $rcmail->output->command("plugin.list", $response);
             return;
         }
@@ -559,7 +559,7 @@ class ddnotes extends rcube_plugin
     public function message_compose($args): array
     {
         $id = (int) $args["param"]["ddnotes_id"];
-        
+
         if ($id <= 0) {
             return $args;
         }

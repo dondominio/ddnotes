@@ -558,7 +558,7 @@ class ddnotes extends rcube_plugin
 
     public function message_compose($args): array
     {
-        $id = (int) $args["param"]["ddnotes_id"];
+        $id = (int) $args["param"]["ddnotes_id"] ?? 0;
 
         if ($id <= 0) {
             return $args;

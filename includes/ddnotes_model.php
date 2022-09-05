@@ -526,7 +526,7 @@ class ddnotes_model
 
         $db->query($query);
 
-        return $this->findOneById($this->id, $this->user_id);
+        return static::findOneById($this->id, $this->user_id);
     }
 
     private function insert(): ddnotes_model
@@ -554,7 +554,7 @@ class ddnotes_model
             $this->id = (int) $insert_id;
         }
 
-        return $this->findOneById($this->id, $this->user_id);
+        return static::findOneById($this->id, $this->user_id);
     }
 
     public function delete(): bool

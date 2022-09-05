@@ -550,7 +550,7 @@ class ddnotes_model
             )
         );
 
-        if ($insert_id = $db->insert_id($this->tablename)) {
+        if ($insert_id = $db->insert_id(static::$tablename)) {
             $this->id = (int) $insert_id;
         }
 

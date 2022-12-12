@@ -22,7 +22,7 @@ li.ddnotes_list_element span.ddnotes_list_element_size {
 #ddnotes_watermark {
     width: 100%;
     height: 100%;
-    background: center/30% url("/skins/elastic/images/logo.svg") no-repeat #fff;
+    background: center/30% url("/skins/elastic/images/logo.svg") no-repeat;
     background-blend-mode: luminosity;
 }
 
@@ -33,7 +33,6 @@ li.ddnotes_list_element span.ddnotes_list_element_size {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(255, 255, 255, .85);
 }
 
 #ddnotes_note_content img {
@@ -64,7 +63,6 @@ li.ddnotes_list_element span.ddnotes_list_element_size {
 
 div.ddnotes_sticky_title {
     top: -1px;
-    background-color: #fff;
 }
 
 div.TinyMDE {

@@ -1,6 +1,6 @@
 -- Table structure for ddnotes plugin
 
-CREATE TABLE ddnotes (
+CREATE TABLE IF NOT EXISTS ddnotes (
   id integer NOT NULL PRIMARY KEY,
   user_id integer NOT NULL,
   parent_id integer NOT NULL default 0,

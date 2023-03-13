@@ -16,7 +16,7 @@ CREATE SEQUENCE ddnotes_seq
 -- Name: ddnotes; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE ddnotes (
+CREATE TABLE IF NOT EXISTS ddnotes (
  "id" integer DEFAULT nextval('ddnotes_seq'::text) PRIMARY KEY,
  "user_id" integer NOT NULL
         REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,

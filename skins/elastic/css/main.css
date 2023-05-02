@@ -19,6 +19,11 @@ li.ddnotes_list_element span.ddnotes_list_element_size {
     font-size: smaller;
 }
 
+.dark-mode li.ddnotes_list_element span.ddnotes_list_element_date,
+.dark-mode li.ddnotes_list_element span.ddnotes_list_element_size {
+    color: #8ba3a7;
+}
+
 #ddnotes_watermark {
     width: 100%;
     height: 100%;

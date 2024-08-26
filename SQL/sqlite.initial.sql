@@ -9,6 +9,6 @@ CREATE TABLE IF NOT EXISTS ddnotes (
   content blob NOT NULL,
   file_size bigint NOT NULL,
   ts_created timestamp NOT NULL default current_timestamp,
-  ts_updated timestamp NULL default NULL current_timestamp,
+  ts_updated timestamp NOT NULL default current_timestamp,
   FOREIGN KEY (user_id) REFERENCES users(user_id)
 );

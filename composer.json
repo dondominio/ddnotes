@@ -15,7 +15,7 @@
     "homepage": "https://github.com/dondominio/ddnotes",
     "license": "LGPL-3.0-only",
     "type": "roundcube-plugin",
-    "version": "1.0.8",
+    "version": "1.0.9",
     "authors": [
         {
             "name": "Soluciones Corporativas IP, SL",

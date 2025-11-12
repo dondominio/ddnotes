@@ -528,7 +528,7 @@ class ddnotes_model
         $db = rcmail_utils::db();
         $db->query(
             sprintf(
-                "INSERT INTO " . $db->table_name(static::$tablename, true) . " ('parent_id', 'user_id', 'title', 'mimetype', 'content', 'file_size') VALUES(%d, %d, '%s', '%s', '%s', %d) ",
+                "INSERT INTO " . $db->table_name(static::$tablename, true) . " (`parent_id`, `user_id`, `title`, `mimetype`, `content`, `file_size`) VALUES(%d, %d, '%s', '%s', '%s', %d) ",
                 $this->parent_id,
                 $this->user_id,
                 $db->escape($this->title),

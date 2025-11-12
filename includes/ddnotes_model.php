@@ -18,25 +18,19 @@ class ddnotes_model
 {
     public static $tablename = "ddnotes";
 
-    private $id;
-    private $parent_id;
+    private $id = 0;
+    private $parent_id = 0;
     private $user_id;
-    private $mimetype;
-    private $title;
-    private $content;
-    private $file_size;
+    private $mimetype = "text/markdown";
+    private $title = "";
+    private $content = "";
+    private $file_size = 0;
     private $created;
     private $updated;
 
     public function __construct()
     {
-        $this->id           = 0;
-        $this->parent_id    = 0;
         $this->user_id      = (int) rcmail::get_instance()->user->ID;
-        $this->mimetype     = "text/markdown";
-        $this->title        = "";
-        $this->content      = "";
-        $this->file_size    = 0;
         $this->created      = new DateTime();
         $this->updated      = new DateTime();
     }
@@ -381,7 +375,7 @@ class ddnotes_model
      */
     public function parseMime(): array
     {
-        list($type, $subtype) = explode("/", $this->getMimeType());
+        [$type, $subtype] = explode("/", $this->getMimeType());
         return [0 => $type, "type" => $type, 1 => $subtype, "subtype" => $subtype];
     }
 
@@ -393,7 +387,7 @@ class ddnotes_model
      */
     public static function isValidMime(string $mime): bool
     {
-        list($type, $subtype) = explode("/", $mime);
+        [$type, $subtype] = explode("/", $mime);
         $formats = rcmail::get_instance()->config->get("ddnotes_config")["extensions"];
 
         if (array_key_exists($type, $formats)) {

@@ -51,7 +51,7 @@ class ddnotes extends rcube_plugin
         // include localization
         $this->add_texts('/localization/', true);
 
-        $this->add_button(array(
+        $this->add_button([
             "command"       => "ddnotes",
             "type"          => "link",
             "id"            => "ddnotes",
@@ -59,7 +59,7 @@ class ddnotes extends rcube_plugin
             "class"         => "button-notes",
             "classsel"      => "button-notes button-selected",
             "innerclass"    => "button-inner",
-        ), "taskbar");
+        ], "taskbar");
 
 
         if ($rcmail->task === "ddnotes") {
@@ -68,19 +68,19 @@ class ddnotes extends rcube_plugin
             $this->init_includes();
 
             // Loads the main page of the plugin
-            $this->register_action("index", array($this, "render"));
+            $this->register_action("index", [$this, "render"]);
 
             /**
              * Ajax actions
              */
             // Action to load an attachment /?task=ddnotes&_action=view&_uid=ATTACHMENTID
-            $this->register_action("view", array($this, "view"));
+            $this->register_action("view", [$this, "view"]);
             // Action to upload a file note (.pdf, .txt or images files)
-            $this->register_action("upload_file", array($this, "upload"));
+            $this->register_action("upload_file", [$this, "upload"]);
             // Image insertion via editor
-            $this->register_action("embed", array($this, "embed"));
+            $this->register_action("embed", [$this, "embed"]);
             // Retrieve notes list
-            $this->register_action("refresh_list", array($this, "refresh_list"));
+            $this->register_action("refresh_list", [$this, "refresh_list"]);
 
             /**
              * Register <roundcube:objects /> from html
@@ -92,11 +92,11 @@ class ddnotes extends rcube_plugin
             /**
              * Notes ajax actions (CRUD)
              */
-            $this->register_action("new", array($this, "new"));
-            $this->register_action("list", array($this, "list"));
-            $this->register_action("show", array($this, "show"));
-            $this->register_action("update", array($this, "update"));
-            $this->register_action("delete", array($this, "delete"));
+            $this->register_action("new", [$this, "new"]);
+            $this->register_action("list", [$this, "list"]);
+            $this->register_action("show", [$this, "show"]);
+            $this->register_action("update", [$this, "update"]);
+            $this->register_action("delete", [$this, "delete"]);
 
             /**
              * CSS includes
@@ -121,7 +121,7 @@ class ddnotes extends rcube_plugin
             $this->init_config();
             $this->init_includes();
 
-            $this->add_hook("message_compose", array($this, "message_compose"));
+            $this->add_hook("message_compose", [$this, "message_compose"]);
         }
     }
 
